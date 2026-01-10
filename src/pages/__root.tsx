@@ -1,0 +1,21 @@
+import { jotaiStore } from '@/store';
+import { fetchME, IAuthStore, userAtom } from '@/store/auth.atom';
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
+
+interface IRouteContext {
+	auth: IAuthStore;
+}
+
+export const Route = createRootRouteWithContext<IRouteContext>()({
+	beforeLoad: async () => {
+		await fetchME();
+		return { auth: jotaiStore.get(userAtom) };
+	},
+	component: () => (
+		<>
+			<Outlet />
+			{/* {!import.meta.env.PROD && <TanStackRouterDevtools />} */}
+		</>
+	),
+	notFoundComponent: () => <div>404</div>,
+});
