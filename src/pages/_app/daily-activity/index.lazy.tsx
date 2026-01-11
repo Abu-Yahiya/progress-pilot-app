@@ -3,9 +3,12 @@ import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
 import { useDailyActivities } from '@/hooks/useDailyActivities';
 import { DialogTitle } from '@radix-ui/react-dialog';
 import { createLazyFileRoute } from '@tanstack/react-router';
-import { BookOpen, Dumbbell, Heart, Plus } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Calendar, Plus, Sparkles } from 'lucide-react';
+import { useState } from 'react';
 import ActivityList from './~module/components/ActivityList';
 import DailyActivityForm from './~module/components/DailyActivityForm';
+import DailySummary from './~module/components/DailySummary';
 
 export const Route = createLazyFileRoute('/_app/daily-activity/')({
 	component: RouteComponent,
@@ -40,113 +43,161 @@ function RouteComponent() {
 		(todayActivity?.exercise?.seatUp || 0) +
 		(todayActivity?.exercise?.jumpingJack || 0);
 
+	// State for activities
+	const [ebadah, setEbadah] = useState<EbadahData>({
+		namajWithJamath: null,
+		extraNamaj: 1,
+		ishraq: null,
+		tahajjud: null,
+		tilwat: null,
+		hadith: null,
+		readingBook: null,
+		waqiyah: null,
+		mulk: null,
+		translation: null,
+	});
+
+	const [jikirAjkar, setJikirAjkar] = useState<JikirAjkarData>({
+		istigfar: null,
+		durudYunus: null,
+		durud: 5,
+		doaTawhid: null,
+	});
+	const [exercise, setExercise] = useState<ExerciseData>({
+		pushUp: 5,
+		squats: null,
+		seatUp: null,
+		running: null,
+		jumpingJack: null,
+		plank: null,
+		dumbbleCurl: null,
+		others: null,
+	});
+
+	const [tasks, setTasks] = useState<any[]>([
+		{
+			id: '1',
+			title: 'Complete project documentation',
+			description: 'Write API docs',
+			progressScore: 75,
+		},
+		{
+			id: '2',
+			title: 'Review pull requests',
+			description: 'Code review for team',
+			progressScore: 100,
+		},
+		{
+			id: '3',
+			title: 'Study React patterns',
+			description: '',
+			progressScore: 30,
+		},
+	]);
+
+	// Calculate summaries for DailySummary
+	const getCompletedCount = (
+		data: EbadahData | JikirAjkarData | ExerciseData
+	) => Object.values(data).filter((v) => v !== null && v > 0).length;
+
+	const categorySummaries = [
+		{
+			name: 'Ebadah',
+			completed: getCompletedCount(ebadah),
+			total: Object.keys(ebadah).length,
+			color: 'bg-emerald-400',
+		},
+		{
+			name: 'Jikir',
+			completed: getCompletedCount(jikirAjkar),
+			total: Object.keys(jikirAjkar).length,
+			color: 'bg-pink-400',
+		},
+		{
+			name: 'Exercise',
+			completed: getCompletedCount(exercise),
+			total: Object.keys(exercise).length,
+			color: 'bg-orange-400',
+		},
+		{
+			name: 'Tasks',
+			completed: tasks.filter((t) => t.progressScore === 100).length,
+			total: tasks.length,
+			color: 'bg-slate-300',
+		},
+	];
+
+	const overallProgress = Math.round(
+		categorySummaries.reduce(
+			(acc, cat) => acc + (cat.completed / cat.total) * 100,
+			0
+		) / categorySummaries.length
+	);
+
+	const today = new Date().toLocaleDateString('en-US', {
+		weekday: 'long',
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric',
+	});
+
 	return (
-		<div className='min-h-screen bg-background islamic-pattern'>
-			{/* Main Content */}
-			<main className='container mx-auto py-8 space-y-5'>
-				{/* Header */}
-				<div className='z-50 bg-card/80 border border-border/80 shadow-soft rounded-2xl'>
-					<div className='container mx-auto px-4 py-4'>
-						<div className='flex items-center justify-between'>
-							<div className='flex items-center gap-3'>
-								<div>
-									<h1 className='font-display text-2xl font-bold text-foreground'>
-										Daily Activity
-									</h1>
-									<p className='text-sm text-muted-foreground font-bangla'>
-										দৈনিক কার্যকলাপ ট্র্যাকার
-									</p>
-								</div>
-							</div>
-							<Button onClick={openNewForm} className='gap-2'>
-								<Plus className='w-5 h-5' />
-								<span className='hidden sm:inline'>নতুন কার্যকলাপ</span>
-								<span className='sm:hidden'>যোগ করুন</span>
-							</Button>
+		<div className='pt-15 space-y-5'>
+			<motion.div
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.5 }}
+				className='flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6'
+			>
+				<div>
+					<div className='flex items-center gap-3 mb-2'>
+						<div className='w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-deep flex items-center justify-center'>
+							<Sparkles className='w-6 h-6 text-white' />
+						</div>
+						<div>
+							<h1 className='font-display text-2xl md:text-3xl font-bold'>
+								Daily Activities
+							</h1>
+							<p className='text-muted-foreground text-sm flex items-center gap-2'>
+								<Calendar className='w-4 h-4' />
+								{today}
+							</p>
 						</div>
 					</div>
 				</div>
-				{/* Stats Cards */}
-				<div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-8'>
-					<div
-						className='bg-card rounded-xl p-6 shadow-card border border-border/50 animate-fade-in'
-						style={{ animationDelay: '0.1s' }}
-					>
-						<div className='flex items-center gap-4'>
-							<div className='w-14 h-14 rounded-xl bg-primary flex items-center justify-center shadow-soft'>
-								<BookOpen className='w-7 h-7 text-primary-foreground' />
-							</div>
-							<div>
-								<p className='text-sm text-muted-foreground font-bangla'>
-									আজকের নামাজ
-								</p>
-								<p className='text-3xl font-display font-bold text-foreground'>
-									{totalNamaj}
-									<span className='text-lg text-muted-foreground'>/5</span>
-								</p>
-							</div>
-						</div>
-					</div>
-
-					<div
-						className='bg-card rounded-xl p-6 shadow-card border border-border/50 animate-fade-in'
-						style={{ animationDelay: '0.2s' }}
-					>
-						<div className='flex items-center gap-4'>
-							<div className='w-14 h-14 rounded-xl bg-amber-500 flex items-center justify-center shadow-soft'>
-								<Heart className='w-7 h-7 text-background' />
-							</div>
-							<div>
-								<p className='text-sm text-muted-foreground font-bangla'>
-									আজকের জিকির
-								</p>
-								<p className='text-3xl font-display font-bold text-foreground'>
-									{totalJikir}
-								</p>
-							</div>
-						</div>
-					</div>
-
-					<div
-						className='bg-card rounded-xl p-6 shadow-card border border-border/50 animate-fade-in'
-						style={{ animationDelay: '0.3s' }}
-					>
-						<div className='flex items-center gap-4'>
-							<div className='w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center shadow-soft'>
-								<Dumbbell className='w-7 h-7 text-primary' />
-							</div>
-							<div>
-								<p className='text-sm text-muted-foreground font-bangla'>
-									আজকের ব্যায়াম
-								</p>
-								<p className='text-3xl font-display font-bold text-foreground'>
-									{totalExercise}
-									<span className='text-lg text-muted-foreground'> রেপ</span>
-								</p>
-							</div>
-						</div>
-					</div>
+				<Button
+					variant='hero'
+					className='self-start md:self-auto bg-gradient-to-br from-primary to-deep'
+					onClick={openNewForm}
+				>
+					<Plus className='w-4 h-4 mr-2' />
+					Add Activity
+				</Button>
+			</motion.div>
+			<DailySummary
+				categories={categorySummaries}
+				streak={12}
+				overallProgress={overallProgress}
+			/>
+			{/* Section Header */}
+			<div className='flex items-center justify-between mb-6'>
+				<div>
+					<h2 className='text-xl font-display font-semibold text-foreground'>
+						Monthly Activities
+					</h2>
+					<p className='text-sm text-muted-foreground'>All Activities</p>
 				</div>
-				{/* Section Header */}
-				<div className='flex items-center justify-between mb-6'>
-					<div>
-						<h2 className='text-xl font-display font-semibold text-foreground'>
-							সকল কার্যকলাপ
-						</h2>
-						<p className='text-sm text-muted-foreground'>All Activities</p>
-					</div>
-					<p className='text-sm text-muted-foreground font-bangla'>
-						{activities.length} টি রেকর্ড
-					</p>
-				</div>
-				{/* Activity List */}
-				<ActivityList
-					activities={activities}
-					onEdit={openEditForm}
-					onDelete={deleteActivity}
-				/>
-			</main>
-
+				<p className='text-sm text-muted-foreground font-bangla'>
+					{activities.length} records
+				</p>
+			</div>
+			{/* Activity List */}
+			<ActivityList
+				activities={activities}
+				onEdit={openEditForm}
+				onDelete={deleteActivity}
+			/>{' '}
+			<div className='grid gap-5 grid-cols-3'></div>
 			{/* Form Dialog */}
 			<Dialog open={isFormOpen} onOpenChange={(open) => !open && closeForm()}>
 				<DialogContent className='!max-w-7xl !max-h-[90vh] overflow-y-auto bg-[#FBFAF5] dark:bg-background border-border'>
@@ -170,4 +221,36 @@ function RouteComponent() {
 			</Dialog>
 		</div>
 	);
+}
+
+// Activity data types
+interface EbadahData {
+	namajWithJamath: number | null;
+	extraNamaj: number | null;
+	ishraq: number | null;
+	tahajjud: number | null;
+	tilwat: number | null;
+	hadith: number | null;
+	readingBook: number | null;
+	waqiyah: number | null;
+	mulk: number | null;
+	translation: number | null;
+}
+
+interface JikirAjkarData {
+	istigfar: number | null;
+	durudYunus: number | null;
+	durud: number | null;
+	doaTawhid: number | null;
+}
+
+interface ExerciseData {
+	pushUp: number | null;
+	squats: number | null;
+	seatUp: number | null;
+	running: number | null;
+	jumpingJack: number | null;
+	plank: number | null;
+	dumbbleCurl: number | null;
+	others: number | null;
 }

@@ -19,6 +19,7 @@ import {
 	ChartNetwork,
 	HomeIcon,
 	LogOutIcon,
+	Rocket,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAppConfirm } from './AppConfirm';
@@ -101,7 +102,14 @@ const AppSidenav = () => {
 			<SidebarHeader>
 				<div className='flex items-center gap-2'>
 					{state === 'expanded' && (
-						<h2 className='font-semibold text-3xl'>🚀ProgressPilot</h2>
+						<Link to='/' className='flex items-center gap-3'>
+							<div className='w-12 h-12 rounded-xl bg-primary-foreground/20 backdrop-blur flex items-center justify-center'>
+								<Rocket className='w-6 h-6' />
+							</div>
+							<span className='font-display font-bold text-2xl'>
+								Progress Pilot
+							</span>
+						</Link>
 					)}
 				</div>
 			</SidebarHeader>

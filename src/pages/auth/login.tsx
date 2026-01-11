@@ -207,7 +207,7 @@ function RouteComponent() {
 
 								<Button
 									type='submit'
-									// variant='hero'
+									variant='hero'
 									size='lg'
 									className='w-full'
 									disabled={loginMutation.isPending}

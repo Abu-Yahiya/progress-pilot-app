@@ -13,9 +13,9 @@ export function ModeToggler() {
 			size='icon'
 		>
 			{theme === 'dark' ? (
-				<Sun className='h-[1.2rem] w-[1.2rem] transition-all' />
+				<Sun className='text-primary h-[1.2rem] w-[1.2rem] transition-all' />
 			) : (
-				<Moon className='h-[1.2rem] w-[1.2rem] transition-all' />
+				<Moon className='text-primary h-[1.2rem] w-[1.2rem] transition-all' />
 			)}
 		</Button>
 	);

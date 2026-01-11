@@ -6,16 +6,19 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
-import { bn } from 'date-fns/locale';
 import {
 	BookOpen,
 	Check,
 	Dumbbell,
 	Edit,
 	Heart,
+	Moon,
+	Sun,
 	Trash2,
 	X,
 } from 'lucide-react';
+import { useState } from 'react';
+import ActivityPortionItemCard from './ActivityPortionItemCard';
 import { DailyActivity } from './types';
 
 interface ActivityCardProps {
@@ -39,7 +42,7 @@ const StatItem = ({
 		return null;
 
 	return (
-		<div className='flex items-center justify-between py-2 px-3 dark:bg-background bg-[#FBFAF5] rounded-lg'>
+		<div className='flex items-center justify-between py-2 px-3 dark:bg-muted bg-primary/10 rounded-lg'>
 			<span className='text-sm text-muted-foreground'>
 				{label} <span className='font-bangla'>({labelBn})</span>
 			</span>
@@ -56,42 +59,10 @@ const StatItem = ({
 	);
 };
 
-const SectionCard = ({
-	title,
-	titleBn,
-	icon,
-	children,
-}: {
-	title: string;
-	titleBn: string;
-	icon: React.ReactNode;
-	children: React.ReactNode;
-}) => {
-	const hasContent =
-		!!children && (Array.isArray(children) ? children.some(Boolean) : true);
-
-	if (!hasContent) return null;
-
-	return (
-		<div className='bg-card rounded-lg p-4 border border-border/30'>
-			<div className='flex items-center gap-2 mb-3'>
-				<div className='w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary'>
-					{icon}
-				</div>
-				<div>
-					<h4 className='font-medium text-foreground text-sm'>{title}</h4>
-					<p className='text-xs text-muted-foreground font-bangla'>{titleBn}</p>
-				</div>
-			</div>
-			<div className='space-y-2'>{children}</div>
-		</div>
-	);
-};
-
 const ActivityCard = ({ activity, onEdit, onDelete }: ActivityCardProps) => {
 	const formattedDate = activity.createdAt
-		? format(new Date(activity.createdAt), 'EEEE, dd MMMM yyyy', { locale: bn })
-		: 'তারিখ নেই';
+		? format(new Date(activity.createdAt), 'EEEE, dd MMMM yyyy')
+		: 'Invalid Date';
 
 	const totalNamaj =
 		(activity.ebadah?.namajWithJamath || 0) +
@@ -107,15 +78,67 @@ const ActivityCard = ({ activity, onEdit, onDelete }: ActivityCardProps) => {
 		(activity.exercise?.seatUp || 0) +
 		(activity.exercise?.jumpingJack || 0);
 
+	// State for activities
+	const [ebadah, setEbadah] = useState<EbadahData>({
+		namajWithJamath: null,
+		extraNamaj: 1,
+		ishraq: null,
+		tahajjud: null,
+		tilwat: null,
+		hadith: null,
+		readingBook: null,
+		waqiyah: null,
+		mulk: null,
+		translation: null,
+	});
+
+	const [jikirAjkar] = useState<JikirAjkarData>({
+		istigfar: null,
+		durudYunus: null,
+		durud: 5,
+		doaTawhid: null,
+	});
+	const [exercise] = useState<any>({
+		pushUp: 5,
+		squats: null,
+		seatUp: null,
+		running: null,
+		jumpingJack: null,
+		plank: null,
+		dumbbleCurl: null,
+		others: null,
+	});
+	const exerciseItems = Object.entries(exercise).map(([key, value]) => ({
+		key,
+		label: exerciseLabels[key] || key,
+		value,
+		icon: exerciseIcons[key],
+	}));
+
+	// Convert data to items for ActivityCard
+	const ebadahItems = Object.entries(ebadah).map(([key, value]) => ({
+		key,
+		label: ebadahLabels[key] || key,
+		value,
+		icon: ebadahIcons[key],
+	}));
+
+	const jikirItems = Object.entries(jikirAjkar).map(([key, value]) => ({
+		key,
+		label: jikirLabels[key] || key,
+		value,
+		icon: Heart,
+	}));
+
 	return (
 		<AccordionItem
 			value={activity._id}
-			className='border border-border/80 !cursor-pointer rounded-xl overflow-hidden shadow-soft mb-3 bg-gradient-card'
+			className='border border-border/80 !cursor-pointer rounded-xl overflow-hidden shadow-soft mb-3 bg-card'
 		>
 			<AccordionTrigger className='px-4 py-4 hover:no-underline hover:bg-secondary/20 transition-colors'>
 				<div className='flex items-center justify-between w-full pr-4'>
 					<div className='flex items-center gap-4'>
-						<div className='w-10 h-10 rounded-lg bg-primary flex items-center justify-center shadow-soft'>
+						<div className='bg-gradient-to-br from-primary to-deep w-10 h-10 rounded-lg bg-primary flex items-center justify-center shadow-soft'>
 							<BookOpen className='w-5 h-5 text-primary-foreground' />
 						</div>
 						<div className='text-left'>
@@ -131,13 +154,13 @@ const ActivityCard = ({ activity, onEdit, onDelete }: ActivityCardProps) => {
 								</Badge>
 								<Badge
 									variant='outline'
-									className='text-xs bg-accent/10 text-amber-500 border-amber-500/30'
+									className='text-xs bg-accent/10 text-accent border-accent/20'
 								>
 									জিকির: {totalJikir}
 								</Badge>
 								<Badge
 									variant='outline'
-									className='text-xs bg-emerald-glow/10 text-emerald-glow border-emerald-glow/20'
+									className='text-xs bg-deep/10 text-deep-glow  border-deep/20'
 								>
 									ব্যায়াম: {totalExercise}
 								</Badge>
@@ -152,7 +175,7 @@ const ActivityCard = ({ activity, onEdit, onDelete }: ActivityCardProps) => {
 							// variant='icon'
 							size='icon'
 							onClick={() => onEdit(activity)}
-							className='h-8 w-8'
+							className='bg-gradient-to-br from-primary to-deep h-8 w-8'
 						>
 							<Edit className='w-4 h-4' />
 						</Button>
@@ -160,7 +183,7 @@ const ActivityCard = ({ activity, onEdit, onDelete }: ActivityCardProps) => {
 							// variant='icon'
 							size='icon'
 							onClick={() => onDelete(activity._id)}
-							className='h-8 w-8 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive'
+							className='bg-gradient-to-br from-primary to-deep h-8 w-8 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive'
 						>
 							<Trash2 className='w-4 h-4' />
 						</Button>
@@ -169,151 +192,35 @@ const ActivityCard = ({ activity, onEdit, onDelete }: ActivityCardProps) => {
 			</AccordionTrigger>
 			<AccordionContent className='px-5 pb-5'>
 				<div className='grid grid-cols-1 md:grid-cols-3 gap-4 pt-2'>
-					{/* Ebadah */}
-					<SectionCard
+					<ActivityPortionItemCard
 						title='Ebadah'
-						titleBn='ইবাদত'
-						icon={<BookOpen className='w-4 h-4' />}
-					>
-						<StatItem
-							label='Namaj with Jamath'
-							labelBn='জামাতে নামাজ'
-							value={activity.ebadah?.namajWithJamath}
-						/>
-						<StatItem
-							label='Extra Namaj'
-							labelBn='নফল নামাজ'
-							value={activity.ebadah?.extraNamaj}
-						/>
-						<StatItem
-							label='Ishraq'
-							labelBn='ইশরাক'
-							value={activity.ebadah?.ishraq}
-							isBoolean
-						/>
-						<StatItem
-							label='Tahajjud'
-							labelBn='তাহাজ্জুদ'
-							value={activity.ebadah?.tahajjud}
-							isBoolean
-						/>
-						<StatItem
-							label='Surah Waqiyah'
-							labelBn='সূরা ওয়াকিয়াহ'
-							value={activity.ebadah?.waqiyah}
-							isBoolean
-						/>
-						<StatItem
-							label='Surah Mulk'
-							labelBn='সূরা মুলক'
-							value={activity.ebadah?.mulk}
-							isBoolean
-						/>
-						<StatItem
-							label='Tilawat'
-							labelBn='তিলাওয়াত'
-							value={activity.ebadah?.tilwat}
-						/>
-						<StatItem
-							label='Hadith'
-							labelBn='হাদিস'
-							value={activity.ebadah?.hadith}
-						/>
-						<StatItem
-							label='Reading Book'
-							labelBn='কিতাব পড়া'
-							value={activity.ebadah?.readingBook}
-						/>
-						<StatItem
-							label='Translation'
-							labelBn='তরজমা'
-							value={activity.ebadah?.translation}
-						/>
-					</SectionCard>
+						icon={Moon}
+						iconColor='bg-white/20 text-white'
+						bgGradient='bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500'
+						items={ebadahItems}
+						delay={0.1}
+					/>
 
-					{/* Jikir */}
-					<SectionCard
-						title='Jikir & Azkar'
-						titleBn='জিকির ও আযকার'
-						icon={<Heart className='w-4 h-4' />}
-					>
-						<StatItem
-							label='Istigfar'
-							labelBn='ইস্তেগফার'
-							value={activity.jikirAjkar?.istigfar}
-						/>
-						<StatItem
-							label='Durud Yunus'
-							labelBn='দুরুদে ইউনুস'
-							value={activity.jikirAjkar?.durudYunus}
-						/>
-						<StatItem
-							label='Durud Sharif'
-							labelBn='দুরুদ শরীফ'
-							value={activity.jikirAjkar?.durud}
-						/>
-						<StatItem
-							label='Doa Tawhid'
-							labelBn='দোয়া তাওহীদ'
-							value={activity.jikirAjkar?.doaTawhid}
-						/>
-					</SectionCard>
+					{/* Jikir Ajkar Card */}
+					<ActivityPortionItemCard
+						title='Jikir Ajkar'
+						icon={Heart}
+						iconColor='bg-white/20 text-white'
+						bgGradient='bg-gradient-to-r from-pink-600 via-rose-500 to-red-400'
+						items={jikirItems}
+						delay={0.2}
+					/>
 
-					{/* Exercise */}
-					<SectionCard
+					{/* Exercise Card */}
+					<ActivityPortionItemCard
 						title='Exercise'
-						titleBn='ব্যায়াম'
-						icon={<Dumbbell className='w-4 h-4' />}
-					>
-						<StatItem
-							label='Push Ups'
-							labelBn='পুশ আপ'
-							value={activity.exercise?.pushUp}
-						/>
-						<StatItem
-							label='Squats'
-							labelBn='স্কোয়াট'
-							value={activity.exercise?.squats}
-						/>
-						<StatItem
-							label='Sit Ups'
-							labelBn='সিট আপ'
-							value={activity.exercise?.seatUp}
-						/>
-						<StatItem
-							label='Running'
-							labelBn='দৌড়'
-							value={
-								activity.exercise?.running
-									? `${activity.exercise.running} মিনিট`
-									: undefined
-							}
-						/>
-						<StatItem
-							label='Jumping Jacks'
-							labelBn='জাম্পিং জ্যাক'
-							value={activity.exercise?.jumpingJack}
-						/>
-						<StatItem
-							label='Plank'
-							labelBn='প্ল্যাংক'
-							value={
-								activity.exercise?.plank
-									? `${activity.exercise.plank} সেকেন্ড`
-									: undefined
-							}
-						/>
-						<StatItem
-							label='Dumbbell Curls'
-							labelBn='ডাম্বেল কার্ল'
-							value={activity.exercise?.dumbbleCurl}
-						/>
-						<StatItem
-							label='Others'
-							labelBn='অন্যান্য'
-							value={activity.exercise?.others}
-						/>
-					</SectionCard>
+						icon={Dumbbell}
+						iconColor='bg-white/20 text-white'
+						bgGradient='bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-400'
+						// @ts-ignore
+						items={exerciseItems}
+						delay={0.3}
+					/>
 				</div>
 			</AccordionContent>
 		</AccordionItem>
@@ -321,3 +228,91 @@ const ActivityCard = ({ activity, onEdit, onDelete }: ActivityCardProps) => {
 };
 
 export default ActivityCard;
+// Activity data types
+interface EbadahData {
+	namajWithJamath: number | null;
+	extraNamaj: number | null;
+	ishraq: number | null;
+	tahajjud: number | null;
+	tilwat: number | null;
+	hadith: number | null;
+	readingBook: number | null;
+	waqiyah: number | null;
+	mulk: number | null;
+	translation: number | null;
+}
+
+interface JikirAjkarData {
+	istigfar: number | null;
+	durudYunus: number | null;
+	durud: number | null;
+	doaTawhid: number | null;
+}
+
+interface ExerciseData {
+	pushUp: number | null;
+	squats: number | null;
+	seatUp: number | null;
+	running: number | null;
+	jumpingJack: number | null;
+	plank: number | null;
+	dumbbleCurl: number | null;
+	others: number | null;
+}
+
+// Icons for specific activities
+const ebadahIcons: Record<string, any> = {
+	namajWithJamath: Moon,
+	extraNamaj: Moon,
+	ishraq: Sun,
+	tahajjud: Moon,
+	tilwat: BookOpen,
+	hadith: BookOpen,
+	readingBook: BookOpen,
+	waqiyah: BookOpen,
+	mulk: BookOpen,
+	translation: BookOpen,
+};
+
+const exerciseIcons: Record<string, any> = {
+	pushUp: Dumbbell,
+	squats: Dumbbell,
+	seatUp: Dumbbell,
+	running: Dumbbell,
+	jumpingJack: Dumbbell,
+	plank: Dumbbell,
+	dumbbleCurl: Dumbbell,
+	others: Dumbbell,
+};
+
+// Label mappings
+const ebadahLabels: Record<string, string> = {
+	namajWithJamath: 'Namaj with Jamath',
+	extraNamaj: 'Extra Namaj',
+	ishraq: 'Ishraq Prayer',
+	tahajjud: 'Tahajjud Prayer',
+	tilwat: 'Quran Tilawat',
+	hadith: 'Hadith Reading',
+	readingBook: 'Islamic Book',
+	waqiyah: 'Surah Waqiyah',
+	mulk: 'Surah Mulk',
+	translation: 'Quran Translation',
+};
+
+const jikirLabels: Record<string, string> = {
+	istigfar: 'Istigfar',
+	durudYunus: 'Durud Yunus',
+	durud: 'Durud Sharif',
+	doaTawhid: 'Doa Tawhid',
+};
+
+const exerciseLabels: Record<string, string> = {
+	pushUp: 'Push Ups',
+	squats: 'Squats',
+	seatUp: 'Sit Ups',
+	running: 'Running (min)',
+	jumpingJack: 'Jumping Jacks',
+	plank: 'Plank (min)',
+	dumbbleCurl: 'Dumbbell Curls',
+	others: 'Other Exercises',
+};
