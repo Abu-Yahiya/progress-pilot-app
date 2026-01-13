@@ -75,9 +75,9 @@ export default function LeaderboardWidget() {
 				</div>
 			</CardHeader>
 			<CardContent className='space-y-3'>
-				{leaderboardData.map((user, index) => {
+				{leaderboardData.map((user) => {
 					const BadgeIcon = user.badge ? badgeIcons[user.badge] : null;
-					const isTop3 = user.rank <= 3;
+					// const isTop3 = user.rank <= 3;
 
 					return (
 						<div

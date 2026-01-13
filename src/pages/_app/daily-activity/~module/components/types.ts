@@ -39,8 +39,15 @@ export interface DailyActivity {
 	ebadah?: EbadahInput;
 	jikirAjkar?: JikirInput;
 	exercise?: ExerciseInput;
+	it: ITInput;
 	createdAt?: Date;
 	updatedAt?: Date;
+}
+
+interface ITInput {
+	title: string;
+	description?: string;
+	progressScore: number;
 }
 
 export interface DailyActivityFormData {

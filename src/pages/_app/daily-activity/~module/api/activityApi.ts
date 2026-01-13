@@ -9,7 +9,13 @@ export const activityApi = (onSuccess?: CallableFunction) => {
 		mutationFn: (payload: CreateDailyActivityDto) =>
 			gqlRequest({
 				query: Create_Daily_Activity_Mutation,
-				variables: { payload },
+				variables: {
+					payload: {
+						...payload,
+						orgUID: import.meta.env.VITE_APP_ORG_UID,
+						user: import.meta.env.VITE_APP_USER_ID,
+					},
+				},
 			}),
 		onSuccess: () => {
 			toast.success('Daily activity created successfully');

@@ -1,12 +1,18 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
+import {
+	DailyActivity,
+	EbadahInputDto,
+	ExerciseInputDto,
+	JikirInputDto,
+} from '@/gql/graphql';
 import { useDailyActivities } from '@/hooks/useDailyActivities';
 import { DialogTitle } from '@radix-ui/react-dialog';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
 import { Calendar, Plus, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import ActivityList from './~module/components/ActivityList';
+import ActivityAccordionList from './~module/components/ActivityAccordionList';
 import DailyActivityForm from './~module/components/DailyActivityForm';
 import DailySummary from './~module/components/DailySummary';
 
@@ -15,36 +21,22 @@ export const Route = createLazyFileRoute('/_app/daily-activity/')({
 });
 
 function RouteComponent() {
+	// console.log(data?.activitiesByOrgAndUser?.__typename);
 	const {
 		activities,
 		editingActivity,
 		isFormOpen,
 		addActivity,
-		updateActivity,
 		deleteActivity,
 		openEditForm,
 		openNewForm,
 		closeForm,
 	} = useDailyActivities();
 
-	const handleSubmit = editingActivity ? updateActivity : addActivity;
-
-	// Calculate stats
-	const todayActivity = activities[0];
-	const totalNamaj = todayActivity?.ebadah?.namajWithJamath || 0;
-	const totalJikir =
-		(todayActivity?.jikirAjkar?.istigfar || 0) +
-		(todayActivity?.jikirAjkar?.durudYunus || 0) +
-		(todayActivity?.jikirAjkar?.durud || 0) +
-		(todayActivity?.jikirAjkar?.doaTawhid || 0);
-	const totalExercise =
-		(todayActivity?.exercise?.pushUp || 0) +
-		(todayActivity?.exercise?.squats || 0) +
-		(todayActivity?.exercise?.seatUp || 0) +
-		(todayActivity?.exercise?.jumpingJack || 0);
+	// const handleSubmit = addActivity;
 
 	// State for activities
-	const [ebadah, setEbadah] = useState<EbadahData>({
+	const [ebadah] = useState<EbadahInputDto>({
 		namajWithJamath: null,
 		extraNamaj: 1,
 		ishraq: null,
@@ -57,13 +49,13 @@ function RouteComponent() {
 		translation: null,
 	});
 
-	const [jikirAjkar, setJikirAjkar] = useState<JikirAjkarData>({
+	const [jikirAjkar] = useState<JikirInputDto>({
 		istigfar: null,
 		durudYunus: null,
 		durud: 5,
 		doaTawhid: null,
 	});
-	const [exercise, setExercise] = useState<ExerciseData>({
+	const [exercise] = useState<ExerciseInputDto>({
 		pushUp: 5,
 		squats: null,
 		seatUp: null,
@@ -74,7 +66,7 @@ function RouteComponent() {
 		others: null,
 	});
 
-	const [tasks, setTasks] = useState<any[]>([
+	const [tasks] = useState<any[]>([
 		{
 			id: '1',
 			title: 'Complete project documentation',
@@ -97,7 +89,8 @@ function RouteComponent() {
 
 	// Calculate summaries for DailySummary
 	const getCompletedCount = (
-		data: EbadahData | JikirAjkarData | ExerciseData
+		data: EbadahInputDto | JikirInputDto | ExerciseInputDto
+		// @ts-ignore
 	) => Object.values(data).filter((v) => v !== null && v > 0).length;
 
 	const categorySummaries = [
@@ -142,7 +135,7 @@ function RouteComponent() {
 	});
 
 	return (
-		<div className='pt-15 space-y-5'>
+		<div className='space-y-5'>
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -155,7 +148,7 @@ function RouteComponent() {
 							<Sparkles className='w-6 h-6 text-white' />
 						</div>
 						<div>
-							<h1 className='font-display text-2xl md:text-3xl font-bold'>
+							<h1 className='font-display text-2xl md:text-3xl font-bold text-foreground'>
 								Daily Activities
 							</h1>
 							<p className='text-muted-foreground text-sm flex items-center gap-2'>
@@ -188,21 +181,21 @@ function RouteComponent() {
 					<p className='text-sm text-muted-foreground'>All Activities</p>
 				</div>
 				<p className='text-sm text-muted-foreground font-bangla'>
-					{activities.length} records
+					{activities?.length} records
 				</p>
 			</div>
 			{/* Activity List */}
-			<ActivityList
-				activities={activities}
+			<ActivityAccordionList
+				// @ts-ignore
+				activities={activities as DailyActivity[]}
 				onEdit={openEditForm}
 				onDelete={deleteActivity}
 			/>{' '}
-			<div className='grid gap-5 grid-cols-3'></div>
 			{/* Form Dialog */}
 			<Dialog open={isFormOpen} onOpenChange={(open) => !open && closeForm()}>
-				<DialogContent className='!max-w-7xl !max-h-[90vh] overflow-y-auto bg-[#FBFAF5] dark:bg-background border-border'>
+				<DialogContent className='!max-w-7xl !max-h-[80vh] overflow-y-auto bg-background border-border'>
 					<DialogHeader>
-						<DialogTitle className='font-display text-xl'>
+						<DialogTitle className='font-display text-xl text-foreground'>
 							{editingActivity
 								? 'কার্যকলাপ সম্পাদনা করুন'
 								: 'নতুন কার্যকলাপ যোগ করুন'}
@@ -212,7 +205,7 @@ function RouteComponent() {
 						</DialogTitle>
 					</DialogHeader>
 					<DailyActivityForm
-						onSubmit={handleSubmit}
+						onSubmit={addActivity}
 						onCancel={closeForm}
 						initialData={editingActivity || undefined}
 						isEditing={!!editingActivity}
@@ -221,36 +214,4 @@ function RouteComponent() {
 			</Dialog>
 		</div>
 	);
-}
-
-// Activity data types
-interface EbadahData {
-	namajWithJamath: number | null;
-	extraNamaj: number | null;
-	ishraq: number | null;
-	tahajjud: number | null;
-	tilwat: number | null;
-	hadith: number | null;
-	readingBook: number | null;
-	waqiyah: number | null;
-	mulk: number | null;
-	translation: number | null;
-}
-
-interface JikirAjkarData {
-	istigfar: number | null;
-	durudYunus: number | null;
-	durud: number | null;
-	doaTawhid: number | null;
-}
-
-interface ExerciseData {
-	pushUp: number | null;
-	squats: number | null;
-	seatUp: number | null;
-	running: number | null;
-	jumpingJack: number | null;
-	plank: number | null;
-	dumbbleCurl: number | null;
-	others: number | null;
 }

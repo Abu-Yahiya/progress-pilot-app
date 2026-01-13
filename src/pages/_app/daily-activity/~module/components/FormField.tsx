@@ -45,7 +45,7 @@ const FormField = ({
 	if (type === 'boolean') {
 		const isChecked = watch?.(name) ?? false;
 		return (
-			<div className='flex items-center justify-between p-4 bg-[#FBFAF5] dark:bg-background rounded-lg border border-border/30 hover:border-primary/30 transition-colors'>
+			<div className='flex items-center justify-between p-4 !bg-dimmed-bg rounded-lg border border-border/30 hover:border-primary/30 transition-colors'>
 				<div className='space-y-0.5'>
 					<Label className='text-sm font-medium text-foreground'>{label}</Label>
 					<p className='text-xs text-muted-foreground font-bangla'>{labelBn}</p>
@@ -71,7 +71,7 @@ const FormField = ({
 					{...register(name as any)}
 					placeholder={placeholder}
 					className={cn(
-						'bg-[#FBFAF5] dark:bg-background border-border/50 focus:border-primary resize-none',
+						'bg-background text-primary border-border/50 focus:border-primary resize-none',
 						errorMessage && 'border-destructive'
 					)}
 				/>
@@ -95,7 +95,7 @@ const FormField = ({
 				{...register(name as any, { valueAsNumber: type === 'number' })}
 				placeholder={placeholder}
 				className={cn(
-					'bg-[#FBFAF5] dark:bg-background border-border/50 focus:border-primary',
+					'bg-background text-primary border-border/50 focus:border-primary',
 					errorMessage && 'border-destructive'
 				)}
 			/>

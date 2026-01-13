@@ -8,7 +8,7 @@ const DashboardScaffold: React.FC<PropsWithChildren> = ({ children }) => {
 			<SidebarProvider defaultOpen={true}>
 				<SidebarInset>
 					<AppNavigation />
-					<div className='container mx-auto max-w-7xl py-8 space-y-5 min-h-screen bg-background  mt-10 flex flex-col flex-1 p-4 gap-4'>
+					<div className='container mx-auto max-w-8xl py-8 space-y-5 min-h-screen bg-background  mt-15 flex flex-col flex-1 p-4 gap-4'>
 						<>{children}</>
 					</div>
 				</SidebarInset>

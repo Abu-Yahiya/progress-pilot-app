@@ -3,29 +3,27 @@ import { User } from '@/types/userType';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { LoginFormStateType } from '../../login';
-import { RegistrationFormStateType } from '../../registration';
 import {
 	Login_User_Details_Query,
 	Login_User_Mutation,
-	Registration_User_Mutation,
 } from '../gql-query/query.gql';
 
 export const authApi = (onRedirect?: CallableFunction) => {
 	// register mutation
-	const registrationMutation = useMutation({
-		mutationFn: (payload: RegistrationFormStateType) =>
-			gqlRequest({
-				query: Registration_User_Mutation,
-				variables: { input: payload },
-			}),
-		onSuccess: () => {
-			toast.success('Registration success. Please login');
-			onRedirect?.();
-		},
-		onError: (error) => {
-			toast.error(error?.message);
-		},
-	});
+	// const registrationMutation = useMutation({
+	// 	mutationFn: (payload: RegistrationFormStateType) =>
+	// 		gqlRequest({
+	// 			query: Registration_User_Mutation,
+	// 			variables: { input: payload },
+	// 		}),
+	// 	onSuccess: () => {
+	// 		toast.success('Registration success. Please login');
+	// 		onRedirect?.();
+	// 	},
+	// 	onError: (error) => {
+	// 		toast.error(error?.message);
+	// 	},
+	// });
 
 	// login mutation
 	const loginMutation = useMutation({
@@ -62,7 +60,6 @@ export const authApi = (onRedirect?: CallableFunction) => {
 		},
 	});
 	return {
-		registrationMutation,
 		loginMutation,
 		loggedInUserDetails,
 		triggerLogout,

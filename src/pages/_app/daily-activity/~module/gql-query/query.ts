@@ -22,6 +22,12 @@ export const All_Daily_Activities_Query = gql`
 					mulk
 					translation
 				}
+				jikirAjkar {
+					istigfar
+					durudYunus
+					durud
+					doaTawhid
+				}
 				exercise {
 					pushUp
 					squats
@@ -34,12 +40,6 @@ export const All_Daily_Activities_Query = gql`
 				}
 				createdAt
 				updatedAt
-			}
-			meta {
-				totalCount
-				currentPage
-				hasNextPage
-				totalPages
 			}
 		}
 	}

@@ -1,151 +1,81 @@
+import { DailyActivityPagination, SortType } from '@/gql/graphql';
+import { gqlRequest } from '@/lib/api-client';
 import { DailyActivity } from '@/pages/_app/daily-activity/~module/components/types';
+import {
+	All_Daily_Activities_Query,
+	Create_Daily_Activity_Mutation,
+} from '@/pages/_app/daily-activity/~module/gql-query/query';
 import { DailyActivityFormSchema } from '@/pages/_app/daily-activity/~module/validationSchema';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 
-// Sample initial data
-const initialActivities: DailyActivity[] = [
-	{
-		_id: '1',
-		orgUID: 'org1',
-		ebadah: {
-			namajWithJamath: 5,
-			extraNamaj: 4,
-			ishraq: true,
-			tahajjud: true,
-			tilwat: 'সূরা বাকারা',
-			hadith: 3,
-			readingBook: 'রিয়াদুস সালেহীন',
-			waqiyah: true,
-			mulk: true,
-			translation: 'সূরা ফাতিহার তাফসীর',
-		},
-		jikirAjkar: {
-			istigfar: 100,
-			durudYunus: 40,
-			durud: 100,
-			doaTawhid: 100,
-		},
-		exercise: {
-			pushUp: 30,
-			squats: 50,
-			seatUp: 40,
-			running: 20,
-			jumpingJack: 50,
-			plank: 60,
-			dumbbleCurl: 20,
-		},
-		createdAt: new Date(),
-		updatedAt: new Date(),
-	},
-	{
-		_id: '2',
-		orgUID: 'org1',
-		ebadah: {
-			namajWithJamath: 4,
-			extraNamaj: 2,
-			ishraq: false,
-			tahajjud: true,
-			tilwat: 'সূরা ইয়াসিন',
-			hadith: 2,
-			waqiyah: true,
-			mulk: true,
-		},
-		jikirAjkar: {
-			istigfar: 70,
-			durudYunus: 30,
-			durud: 50,
-			doaTawhid: 50,
-		},
-		exercise: {
-			pushUp: 25,
-			squats: 40,
-			running: 15,
-		},
-		createdAt: new Date(Date.now() - 86400000),
-		updatedAt: new Date(Date.now() - 86400000),
-	},
-	{
-		_id: '3',
-		orgUID: 'org1',
-		ebadah: {
-			namajWithJamath: 3,
-			extraNamaj: 0,
-			ishraq: false,
-			tahajjud: false,
-			hadith: 1,
-			mulk: true,
-		},
-		jikirAjkar: {
-			istigfar: 50,
-			durud: 30,
-		},
-		exercise: {
-			pushUp: 15,
-			running: 10,
-		},
-		createdAt: new Date(Date.now() - 172800000),
-		updatedAt: new Date(Date.now() - 172800000),
-	},
-];
-
 export const useDailyActivities = () => {
-	const [activities, setActivities] =
-		useState<DailyActivity[]>(initialActivities);
+	const {
+		data,
+		isLoading,
+		refetch: onRefetchActivities,
+	} = useQuery<{
+		activitiesByOrgAndUser: DailyActivityPagination;
+	}>({
+		queryKey: ['all-activities'],
+		queryFn: () =>
+			gqlRequest<{
+				activitiesByOrgAndUser: DailyActivityPagination;
+			}>({
+				query: All_Daily_Activities_Query,
+				variables: {
+					orgUid: import.meta.env.VITE_APP_ORG_UID,
+					userId: import.meta.env.VITE_APP_USER_ID,
+					input: {
+						sort: SortType.Desc,
+						sortBy: 'createdAt',
+					},
+				},
+			}),
+	});
+
+	// const [activities, setActivities] =
+	// 	useState<DailyActivity[]>(initialActivities);
 	const [editingActivity, setEditingActivity] = useState<DailyActivity | null>(
 		null
 	);
 	const [isFormOpen, setIsFormOpen] = useState(false);
 
-	const addActivity = useCallback((data: DailyActivityFormSchema) => {
-		const newActivity: DailyActivity = {
-			_id: Date.now().toString(),
-			orgUID: 'org1',
+	const addActivity = useCallback(
+		(data: DailyActivityFormSchema, onAfterSuccess: CallableFunction) => {
+			useMutation({
+				mutationFn: () =>
+					gqlRequest({
+						query: Create_Daily_Activity_Mutation,
+						variables: { payload: data },
+					}),
+				onSuccess: () => {
+					toast.success('Daily activity created successfully');
+					onRefetchActivities();
+					onAfterSuccess();
+				},
+				onError: () => toast.error('Failed to create daily activity'),
+			});
 
-			// @ts-ignore
-			ebadah: data.ebadah!,
-
-			// @ts-ignore
-			jikirAjkar: data.jikirAjkar!,
-
-			// @ts-ignore
-			exercise: data.exercise!,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		};
-
-		setActivities((prev) => [newActivity, ...prev]);
-		setIsFormOpen(false);
-		toast.success('নতুন কার্যকলাপ সংরক্ষণ করা হয়েছে।');
-	}, []);
-
-	const updateActivity = useCallback(
-		(data: DailyActivityFormSchema) => {
-			if (!editingActivity) return;
-
-			setActivities((prev: any) =>
-				prev.map((activity: any) =>
-					activity._id === editingActivity._id
-						? {
-								...activity,
-								ebadah: data.ebadah,
-								jikirAjkar: data.jikirAjkar,
-								exercise: data.exercise,
-								updatedAt: new Date(),
-						  }
-						: activity
-				)
-			);
-
-			setEditingActivity(null);
 			setIsFormOpen(false);
-			toast.success('কার্যকলাপ আপডেট করা হয়েছে।');
+			toast.success('নতুন কার্যকলাপ সংরক্ষণ করা হয়েছে।');
 		},
-		[editingActivity]
+		[]
 	);
 
-	const deleteActivity = useCallback((id: string) => {
-		setActivities((prev) => prev.filter((activity) => activity._id !== id));
+	const updateActivity = useCallback(() => {
+		if (!editingActivity) return;
+
+		onRefetchActivities();
+
+		setEditingActivity(null);
+		setIsFormOpen(false);
+		toast.success('কার্যকলাপ আপডেট করা হয়েছে।');
+	}, [editingActivity]);
+
+	const deleteActivity = useCallback(() => {
+		onRefetchActivities();
 		toast.error('কার্যকলাপ সফলভাবে মুছে ফেলা হয়েছে।');
 	}, []);
 
@@ -165,7 +95,8 @@ export const useDailyActivities = () => {
 	}, []);
 
 	return {
-		activities,
+		activities: data?.activitiesByOrgAndUser?.nodes!,
+		isLoadingActivities: isLoading,
 		editingActivity,
 		isFormOpen,
 		addActivity,

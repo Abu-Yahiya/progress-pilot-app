@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { Check, LucideIcon } from 'lucide-react';
+import { Check, LucideIcon, X } from 'lucide-react';
 
 interface ActivityItem {
 	key: string;
@@ -79,7 +79,7 @@ export default function ActivityPortionItemCard({
 						<div className='flex items-center gap-2'>
 							<div className='text-right'>
 								<span className='text-2xl font-bold text-white'>
-									{progressPercent}%
+									{progressPercent || 0}%
 								</span>
 							</div>
 						</div>
@@ -96,8 +96,8 @@ export default function ActivityPortionItemCard({
 				</div>
 
 				{/* Activity items */}
-				<CardContent className='p-4 space-y-2 bg-card'>
-					{items.map((item, index) => {
+				<CardContent className='p-4 space-y-2 dark:bg-dimmed-bg'>
+					{items?.map((item, index) => {
 						const ItemIcon = item.icon;
 						const isCompleted = item.value !== null && item.value > 0;
 
@@ -139,28 +139,38 @@ export default function ActivityPortionItemCard({
 
 								<div className='flex items-center gap-2'>
 									{/* Counter controls */}
-									<div className='flex items-center gap-1 bg-background rounded-lg border p-1'>
-										<span
-											className={cn(
-												'w-8 text-center font-semibold text-sm',
-												isCompleted ? 'text-success' : 'text-muted-foreground'
-											)}
-										>
-											{item.value || 0}
-										</span>
-									</div>
+									{item?.value !== undefined &&
+										typeof item.value === 'number' && (
+											<div className='flex items-center gap-1 bg-background rounded-lg border p-1'>
+												<span
+													className={cn(
+														'w-8 text-center font-semibold text-sm',
+														isCompleted
+															? 'text-success'
+															: 'text-muted-foreground'
+													)}
+												>
+													{item.value || 0}
+												</span>
+											</div>
+										)}
 
 									{/* Check mark */}
 									<button
 										// onClick={() => handleToggle(item.key, item.value)}
+
 										className={cn(
 											'w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200',
 											isCompleted
 												? 'bg-success text-white'
-												: 'bg-muted text-muted-foreground hover:bg-muted-foreground/20'
+												: 'bg-destructive text-primary-foreground'
 										)}
 									>
-										<Check className='w-4 h-4' />
+										{isCompleted ? (
+											<Check className='w-4 h-4' />
+										) : (
+											<X className='w-4 h-4' />
+										)}
 									</button>
 								</div>
 							</motion.div>

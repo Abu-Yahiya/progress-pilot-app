@@ -11,7 +11,7 @@ const FormSection = ({ title, titleBn, icon, children }: FormSectionProps) => {
 	return (
 		<div className='bg-card rounded-xl p-6 shadow-card border border-border/50 animate-fade-in'>
 			<div className='flex items-center gap-3 mb-6'>
-				<div className='w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-primary-foreground'>
+				<div className='w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-deep flex items-center justify-center text-primary-foreground'>
 					{icon}
 				</div>
 				<div>

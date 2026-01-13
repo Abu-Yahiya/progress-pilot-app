@@ -4,35 +4,47 @@ export const dailyActivitySchema = yup.object().shape({
 	ebadah: yup.object().shape({
 		namajWithJamath: yup
 			.number()
-			.min(0, 'সর্বনিম্ন ০')
-			.max(5, 'সর্বোচ্চ ৫ ওয়াক্ত')
-			.required('জামাতে নামাজ আবশ্যক'),
-		extraNamaj: yup.number().min(0, 'সর্বনিম্ন ০').nullable(),
-		ishraq: yup.boolean(),
-		tahajjud: yup.boolean(),
-		tilwat: yup.string(),
-		hadith: yup.number().min(0, 'সর্বনিম্ন ০').nullable(),
-		readingBook: yup.string(),
+			.min(1)
+			.max(5)
+			.required()
+			.label('জামাতে নামাজ'),
+		extraNamaj: yup.number().min(0).nullable().label('Nafal নামাজ'),
+		ishraq: yup.boolean().label('Ishraq'),
+		tahajjud: yup.boolean().label('Tahajjud'),
+		tilwat: yup.string().label('Tilwat'),
+		hadith: yup.number().min(0).nullable().label('Hadith'),
+		readingBook: yup.string().label('Book reading'),
 		waqiyah: yup.boolean(),
 		mulk: yup.boolean(),
-		translation: yup.string(),
+		translation: yup.string().label('Translation'),
 	}),
 	jikirAjkar: yup.object().shape({
-		istigfar: yup.number().min(0, 'সর্বনিম্ন ০').nullable(),
-		durudYunus: yup.number().min(0, 'সর্বনিম্ন ০').nullable(),
-		durud: yup.number().min(0, 'সর্বনিম্ন ০').nullable(),
-		doaTawhid: yup.number().min(0, 'সর্বনিম্ন ০').nullable(),
+		istigfar: yup.number().min(0).nullable().label('Istigfar'),
+		durudYunus: yup.number().min(0).nullable().label('Durude Yunus'),
+		durud: yup.number().min(0).nullable().label('Durud'),
+		doaTawhid: yup.number().min(0).nullable('Doay Tawhid'),
 	}),
 	exercise: yup.object().shape({
-		pushUp: yup.number().min(0, 'সর্বনিম্ন ০').nullable(),
-		squats: yup.number().min(0, 'সর্বনিম্ন ০').nullable(),
-		seatUp: yup.number().min(0, 'সর্বনিম্ন ০').nullable(),
-		running: yup.number().min(0, 'সর্বনিম্ন ০').nullable(),
-		jumpingJack: yup.number().min(0, 'সর্বনিম্ন ০').nullable(),
-		plank: yup.number().min(0, 'সর্বনিম্ন ০').nullable(),
-		dumbbleCurl: yup.number().min(0, 'সর্বনিম্ন ০').nullable(),
+		pushUp: yup.number().min(0).nullable().label('Pushup'),
+		squats: yup.number().min(0).nullable().label('Squats'),
+		seatUp: yup.number().min(0).nullable().label('SeatUp'),
+		running: yup.number().min(0).nullable().label('Runnig'),
+		jumpingJack: yup.number().min(0).nullable().label('Jumping Jack'),
+		plank: yup.number().min(0).nullable().label('Plank'),
+		dumbbleCurl: yup.number().min(0).nullable().label('Dummble curl'),
 		others: yup.string(),
 	}),
+	it: yup
+		.array()
+		.of(
+			yup.object({
+				title: yup.string().optional().label('Title'),
+				description: yup.string().optional().label('Description'),
+				progressScore: yup.number().required().label('Progress score'),
+			})
+		)
+		.optional()
+		.label('IT works'),
 });
 
 export type DailyActivityFormSchema = yup.InferType<typeof dailyActivitySchema>;

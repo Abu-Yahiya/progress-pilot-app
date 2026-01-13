@@ -13,7 +13,10 @@ import FormSection from './Formsection';
 import { DailyActivity } from './types';
 
 interface DailyActivityFormProps {
-	onSubmit: (data: DailyActivityFormSchema) => void;
+	onSubmit: (
+		data: DailyActivityFormSchema,
+		onAfterSuccess: CallableFunction
+	) => void;
 	onCancel?: () => void;
 	initialData?: DailyActivity;
 	isEditing?: boolean;
@@ -25,7 +28,7 @@ const DailyActivityForm = ({
 	initialData,
 }: // isEditing = false,
 DailyActivityFormProps) => {
-	const { createDailyActivity } = activityApi();
+	const { createDailyActivity } = activityApi(() => onCancel?.());
 	const {
 		register,
 		handleSubmit,
@@ -33,10 +36,11 @@ DailyActivityFormProps) => {
 		setValue,
 		formState: { errors },
 	} = useForm<DailyActivityFormSchema>({
+		// @ts-ignore
 		resolver: yupResolver(dailyActivitySchema),
 		defaultValues: {
 			ebadah: {
-				namajWithJamath: initialData?.ebadah?.namajWithJamath ?? 0,
+				namajWithJamath: initialData?.ebadah?.namajWithJamath! ?? null,
 				extraNamaj: initialData?.ebadah?.extraNamaj ?? 0,
 				ishraq: initialData?.ebadah?.ishraq ?? false,
 				tahajjud: initialData?.ebadah?.tahajjud ?? false,
@@ -63,6 +67,13 @@ DailyActivityFormProps) => {
 				dumbbleCurl: initialData?.exercise?.dumbbleCurl ?? 0,
 				others: initialData?.exercise?.others ?? '',
 			},
+			// it: [
+			// 	{
+			// 		title: initialData?.it?.title ?? '',
+			// 		description: initialData?.it?.description ?? '',
+			// 		progressScore: initialData?.it?.progressScore ?? 0,
+			// 	},
+			// ],
 		},
 	});
 
@@ -304,7 +315,7 @@ DailyActivityFormProps) => {
 				{onCancel && (
 					<Button
 						type='button'
-						variant='outline'
+						variant='destructive'
 						onClick={onCancel}
 						className='gap-2'
 					>

@@ -45,7 +45,7 @@ function RouteComponent() {
 		mode === 'signup' ? setMode('signin') : navigate({ to: '/' }); // Replace '/settings' with any route path
 	};
 
-	const { loginMutation, registrationMutation } = authApi(handleRedirect);
+	const { loginMutation } = authApi(handleRedirect);
 
 	// Define your form.
 	const form = useForm<LoginFormStateType>({
@@ -54,9 +54,8 @@ function RouteComponent() {
 
 	// Define a submit handler.
 	function onSubmit(values: any) {
-		mode === 'signin'
-			? loginMutation.mutate(values)
-			: registrationMutation.mutate(values);
+		mode === 'signin' && loginMutation.mutate(values);
+		// : registrationMutation.mutate(values);
 	}
 
 	return (
@@ -224,7 +223,7 @@ function RouteComponent() {
 
 							<div className='mt-6 text-center text-sm'>
 								<span
-									onClick={(m) =>
+									onClick={() =>
 										mode === 'signin'
 											? setMode('/auth/login')
 											: setMode('/auth/registration')

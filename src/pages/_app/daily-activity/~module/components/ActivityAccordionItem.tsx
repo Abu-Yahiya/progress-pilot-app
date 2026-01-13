@@ -8,16 +8,15 @@ import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import {
 	BookOpen,
-	Check,
 	Dumbbell,
 	Edit,
 	Heart,
+	LayoutGrid,
 	Moon,
 	Sun,
 	Trash2,
-	X,
 } from 'lucide-react';
-import { useState } from 'react';
+import { FC } from 'react';
 import ActivityPortionItemCard from './ActivityPortionItemCard';
 import { DailyActivity } from './types';
 
@@ -27,39 +26,11 @@ interface ActivityCardProps {
 	onDelete: (id: string) => void;
 }
 
-const StatItem = ({
-	label,
-	labelBn,
-	value,
-	isBoolean = false,
-}: {
-	label: string;
-	labelBn: string;
-	value: any;
-	isBoolean?: boolean;
+const ActivityAccordionItem: FC<ActivityCardProps> = ({
+	activity,
+	onEdit,
+	onDelete,
 }) => {
-	if (value === undefined || value === null || value === '' || value === 0)
-		return null;
-
-	return (
-		<div className='flex items-center justify-between py-2 px-3 dark:bg-muted bg-primary/10 rounded-lg'>
-			<span className='text-sm text-muted-foreground'>
-				{label} <span className='font-bangla'>({labelBn})</span>
-			</span>
-			{isBoolean ? (
-				value ? (
-					<Check className='w-4 h-4 text-primary' />
-				) : (
-					<X className='w-4 h-4 text-muted-foreground' />
-				)
-			) : (
-				<span className='font-semibold text-foreground'>{value}</span>
-			)}
-		</div>
-	);
-};
-
-const ActivityCard = ({ activity, onEdit, onDelete }: ActivityCardProps) => {
 	const formattedDate = activity.createdAt
 		? format(new Date(activity.createdAt), 'EEEE, dd MMMM yyyy')
 		: 'Invalid Date';
@@ -78,57 +49,36 @@ const ActivityCard = ({ activity, onEdit, onDelete }: ActivityCardProps) => {
 		(activity.exercise?.seatUp || 0) +
 		(activity.exercise?.jumpingJack || 0);
 
-	// State for activities
-	const [ebadah, setEbadah] = useState<EbadahData>({
-		namajWithJamath: null,
-		extraNamaj: 1,
-		ishraq: null,
-		tahajjud: null,
-		tilwat: null,
-		hadith: null,
-		readingBook: null,
-		waqiyah: null,
-		mulk: null,
-		translation: null,
-	});
-
-	const [jikirAjkar] = useState<JikirAjkarData>({
-		istigfar: null,
-		durudYunus: null,
-		durud: 5,
-		doaTawhid: null,
-	});
-	const [exercise] = useState<any>({
-		pushUp: 5,
-		squats: null,
-		seatUp: null,
-		running: null,
-		jumpingJack: null,
-		plank: null,
-		dumbbleCurl: null,
-		others: null,
-	});
-	const exerciseItems = Object.entries(exercise).map(([key, value]) => ({
-		key,
-		label: exerciseLabels[key] || key,
-		value,
-		icon: exerciseIcons[key],
-	}));
+	// const taskItems = ['Propgress Pilot Learning Module Done'].map(
+	// 	([data, index]) => ({ index })
+	// );
+	const exerciseItems = Object?.entries(activity?.exercise! ?? {})?.map(
+		([key, value]) => ({
+			key,
+			label: exerciseLabels[key] || key,
+			value,
+			icon: exerciseIcons[key],
+		})
+	);
 
 	// Convert data to items for ActivityCard
-	const ebadahItems = Object.entries(ebadah).map(([key, value]) => ({
-		key,
-		label: ebadahLabels[key] || key,
-		value,
-		icon: ebadahIcons[key],
-	}));
+	const ebadahItems = Object?.entries(activity?.ebadah! ?? {})?.map(
+		([key, value]) => ({
+			key,
+			label: ebadahLabels[key] || key,
+			value,
+			icon: ebadahIcons[key],
+		})
+	);
 
-	const jikirItems = Object.entries(jikirAjkar).map(([key, value]) => ({
-		key,
-		label: jikirLabels[key] || key,
-		value,
-		icon: Heart,
-	}));
+	const jikirItems = Object?.entries(activity?.jikirAjkar! ?? {})?.map(
+		([key, value]) => ({
+			key,
+			label: jikirLabels[key] || key,
+			value,
+			icon: Heart,
+		})
+	);
 
 	return (
 		<AccordionItem
@@ -191,12 +141,12 @@ const ActivityCard = ({ activity, onEdit, onDelete }: ActivityCardProps) => {
 				</div>
 			</AccordionTrigger>
 			<AccordionContent className='px-5 pb-5'>
-				<div className='grid grid-cols-1 md:grid-cols-3 gap-4 pt-2'>
+				<div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 pt-2'>
 					<ActivityPortionItemCard
 						title='Ebadah'
 						icon={Moon}
 						iconColor='bg-white/20 text-white'
-						bgGradient='bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500'
+						bgGradient='bg-gradient-to-r from-primary via-indigo-deep to-deep'
 						items={ebadahItems}
 						delay={0.1}
 					/>
@@ -206,7 +156,7 @@ const ActivityCard = ({ activity, onEdit, onDelete }: ActivityCardProps) => {
 						title='Jikir Ajkar'
 						icon={Heart}
 						iconColor='bg-white/20 text-white'
-						bgGradient='bg-gradient-to-r from-pink-600 via-rose-500 to-red-400'
+						bgGradient='bg-gradient-to-r from-pink-deep via-rose-deep to-red-medium'
 						items={jikirItems}
 						delay={0.2}
 					/>
@@ -216,9 +166,29 @@ const ActivityCard = ({ activity, onEdit, onDelete }: ActivityCardProps) => {
 						title='Exercise'
 						icon={Dumbbell}
 						iconColor='bg-white/20 text-white'
-						bgGradient='bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-400'
+						bgGradient='bg-gradient-to-r from-orange-deep via-amber-deep to-yellow-medium'
 						// @ts-ignore
 						items={exerciseItems}
+						delay={0.3}
+					/>
+
+					{/* it task */}
+					<ActivityPortionItemCard
+						title='IT Task'
+						icon={LayoutGrid}
+						iconColor='bg-white/20 text-white'
+						// @ts-ignore
+						items={[
+							{
+								idx: 'string',
+								label: 'string',
+								// @ts-ignore
+								value: 'number',
+								// @ts-ignore
+								icon: 'LucideIcon',
+							},
+						]}
+						bgGradient='bg-gradient-to-r from-emerald-deep-1 via-emerald-deep-2 to-teal-deep'
 						delay={0.3}
 					/>
 				</div>
@@ -227,38 +197,7 @@ const ActivityCard = ({ activity, onEdit, onDelete }: ActivityCardProps) => {
 	);
 };
 
-export default ActivityCard;
-// Activity data types
-interface EbadahData {
-	namajWithJamath: number | null;
-	extraNamaj: number | null;
-	ishraq: number | null;
-	tahajjud: number | null;
-	tilwat: number | null;
-	hadith: number | null;
-	readingBook: number | null;
-	waqiyah: number | null;
-	mulk: number | null;
-	translation: number | null;
-}
-
-interface JikirAjkarData {
-	istigfar: number | null;
-	durudYunus: number | null;
-	durud: number | null;
-	doaTawhid: number | null;
-}
-
-interface ExerciseData {
-	pushUp: number | null;
-	squats: number | null;
-	seatUp: number | null;
-	running: number | null;
-	jumpingJack: number | null;
-	plank: number | null;
-	dumbbleCurl: number | null;
-	others: number | null;
-}
+export default ActivityAccordionItem;
 
 // Icons for specific activities
 const ebadahIcons: Record<string, any> = {

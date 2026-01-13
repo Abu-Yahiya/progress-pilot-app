@@ -15,13 +15,12 @@ export const Route = createLazyFileRoute('/_app/')({
 
 function RouteComponent() {
 	const [user] = useAtom(userAtom);
-	// const [showLearningModal, setShowLearningModal] = useState(false);
 
 	return (
 		<div className='min-h-screen'>
 			{/* Main Content */}
-			<main className='pt-15 pb-12 px-4'>
-				<div className='container mx-auto max-w-7xl'>
+			<div className='pb-12'>
+				<div className='container mx-auto'>
 					{/* Welcome Header */}
 					<motion.div
 						initial={{ opacity: 0, y: 20 }}
@@ -113,13 +112,7 @@ function RouteComponent() {
 						</motion.div>
 					</div>
 				</div>
-			</main>
-
-			{/* Learning Input Modal */}
-			{/* <LearningInputModal
-				open={showLearningModal}
-				onOpenChange={setShowLearningModal}
-			/> */}
+			</div>
 		</div>
 	);
 }
