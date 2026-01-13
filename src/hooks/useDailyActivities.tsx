@@ -6,11 +6,15 @@ import {
 	Create_Daily_Activity_Mutation,
 } from '@/pages/_app/daily-activity/~module/gql-query/query';
 import { DailyActivityFormSchema } from '@/pages/_app/daily-activity/~module/validationSchema';
+import { userAtom } from '@/store/auth.atom';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useAtom } from 'jotai';
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 
 export const useDailyActivities = () => {
+	const [session] = useAtom(userAtom);
+
 	const {
 		data,
 		isLoading,
@@ -26,7 +30,7 @@ export const useDailyActivities = () => {
 				query: All_Daily_Activities_Query,
 				variables: {
 					orgUid: import.meta.env.VITE_APP_ORG_UID,
-					userId: import.meta.env.VITE_APP_USER_ID,
+					userId: session?.user?._id,
 					input: {
 						sort: SortType.Desc,
 						sortBy: 'createdAt',

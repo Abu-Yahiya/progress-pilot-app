@@ -1,10 +1,14 @@
 import { CreateDailyActivityDto } from '@/gql/graphql';
 import { gqlRequest } from '@/lib/api-client';
+import { userAtom } from '@/store/auth.atom';
 import { useMutation } from '@tanstack/react-query';
+import { useAtom } from 'jotai';
 import toast from 'react-hot-toast';
 import { Create_Daily_Activity_Mutation } from '../gql-query/query';
 
 export const activityApi = (onSuccess?: CallableFunction) => {
+	const [session] = useAtom(userAtom);
+
 	const createDailyActivity = useMutation({
 		mutationFn: (payload: CreateDailyActivityDto) =>
 			gqlRequest({
@@ -13,7 +17,7 @@ export const activityApi = (onSuccess?: CallableFunction) => {
 					payload: {
 						...payload,
 						orgUID: import.meta.env.VITE_APP_ORG_UID,
-						user: import.meta.env.VITE_APP_USER_ID,
+						user: session?.user?._id,
 					},
 				},
 			}),
