@@ -19,7 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { ArrowLeft, Eye, EyeOff, Lock, Mail, Rocket, User } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, Rocket, User } from 'lucide-react';
 import { useState } from 'react';
 import { authApi } from './~module/api/auth.api';
 
@@ -120,13 +120,13 @@ function RouteComponent() {
 					transition={{ duration: 0.5 }}
 					className='w-full max-w-md'
 				>
-					<Link
+					{/* <Link
 						to='/'
 						className='inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors'
 					>
 						<ArrowLeft className='w-4 h-4' />
 						Back to home
-					</Link>
+					</Link> */}
 
 					<Card className='border-0 shadow-lg'>
 						<CardHeader className='space-y-1 pb-4'>
