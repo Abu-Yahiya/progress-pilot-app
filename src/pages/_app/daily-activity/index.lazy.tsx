@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
 	DailyActivity,
 	EbadahInputDto,
@@ -27,10 +28,12 @@ function RouteComponent() {
 		editingActivity,
 		isFormOpen,
 		addActivity,
+		updateActivity,
 		deleteActivity,
 		openEditForm,
 		openNewForm,
 		closeForm,
+		isLoadingActivities,
 	} = useDailyActivities();
 
 	// const handleSubmit = addActivity;
@@ -38,7 +41,7 @@ function RouteComponent() {
 	// State for activities
 	const [ebadah] = useState<EbadahInputDto>({
 		namajWithJamath: null,
-		extraNamaj: 1,
+		extraNamaj: null,
 		ishraq: null,
 		tahajjud: null,
 		tilwat: null,
@@ -52,11 +55,11 @@ function RouteComponent() {
 	const [jikirAjkar] = useState<JikirInputDto>({
 		istigfar: null,
 		durudYunus: null,
-		durud: 5,
+		durud: 0,
 		doaTawhid: null,
 	});
 	const [exercise] = useState<ExerciseInputDto>({
-		pushUp: 5,
+		pushUp: 0,
 		squats: null,
 		seatUp: null,
 		running: null,
@@ -77,7 +80,7 @@ function RouteComponent() {
 			id: '2',
 			title: 'Review pull requests',
 			description: 'Code review for team',
-			progressScore: 100,
+			progressScore: 0,
 		},
 		{
 			id: '3',
@@ -190,25 +193,40 @@ function RouteComponent() {
 				activities={activities as DailyActivity[]}
 				onEdit={openEditForm}
 				onDelete={deleteActivity}
-			/>{' '}
+				actionBtn={
+					<Button
+						variant='hero'
+						className='mt-5 self-start md:self-auto bg-gradient-to-br from-primary to-deep'
+						onClick={openNewForm}
+					>
+						<Plus className='w-4 h-4 mr-2' />
+						Add Activity
+					</Button>
+				}
+			/>
+			{isLoadingActivities && (
+				<>
+					{new Array(10).fill(10).map((_, idx) => (
+						<Skeleton key={idx} className='my-2 h-20' />
+					))}
+				</>
+			)}
 			{/* Form Dialog */}
 			<Dialog open={isFormOpen} onOpenChange={(open) => !open && closeForm()}>
 				<DialogContent className='!max-w-7xl !max-h-[80vh] overflow-y-auto bg-background border-border'>
 					<DialogHeader>
 						<DialogTitle className='font-display text-xl text-foreground'>
-							{editingActivity
-								? 'কার্যকলাপ সম্পাদনা করুন'
-								: 'নতুন কার্যকলাপ যোগ করুন'}
+							{editingActivity ? 'Update Activity' : 'Add New Activity'}
 							<span className='block text-sm font-normal text-muted-foreground mt-1'>
-								{editingActivity ? 'Edit Activity' : 'Add New Activity'}
+								{'Track your progress everyday'}
 							</span>
 						</DialogTitle>
 					</DialogHeader>
 					<DailyActivityForm
 						onSubmit={addActivity}
+						onEditSubmit={updateActivity}
 						onCancel={closeForm}
 						initialData={editingActivity || undefined}
-						isEditing={!!editingActivity}
 					/>
 				</DialogContent>
 			</Dialog>

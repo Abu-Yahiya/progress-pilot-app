@@ -6,24 +6,25 @@ import { LoginFormStateType } from '../../login';
 import {
 	Login_User_Details_Query,
 	Login_User_Mutation,
+	Registration_User_Mutation,
 } from '../gql-query/query.gql';
 
 export const authApi = (onRedirect?: CallableFunction) => {
 	// register mutation
-	// const registrationMutation = useMutation({
-	// 	mutationFn: (payload: RegistrationFormStateType) =>
-	// 		gqlRequest({
-	// 			query: Registration_User_Mutation,
-	// 			variables: { input: payload },
-	// 		}),
-	// 	onSuccess: () => {
-	// 		toast.success('Registration success. Please login');
-	// 		onRedirect?.();
-	// 	},
-	// 	onError: (error) => {
-	// 		toast.error(error?.message);
-	// 	},
-	// });
+	const registrationMutation = useMutation({
+		mutationFn: (payload: any) =>
+			gqlRequest({
+				query: Registration_User_Mutation,
+				variables: { input: payload },
+			}),
+		onSuccess: () => {
+			toast.success('Registration success. Please login');
+			onRedirect?.();
+		},
+		onError: (error) => {
+			toast.error(error?.message);
+		},
+	});
 
 	// login mutation
 	const loginMutation = useMutation({
@@ -44,6 +45,7 @@ export const authApi = (onRedirect?: CallableFunction) => {
 
 	// logout
 	const triggerLogout = () => {
+		console.log('object');
 		localStorage.removeItem('token');
 		localStorage.removeItem('orgUID');
 	};
@@ -62,6 +64,7 @@ export const authApi = (onRedirect?: CallableFunction) => {
 	return {
 		loginMutation,
 		loggedInUserDetails,
+		registrationMutation,
 		triggerLogout,
 	};
 };

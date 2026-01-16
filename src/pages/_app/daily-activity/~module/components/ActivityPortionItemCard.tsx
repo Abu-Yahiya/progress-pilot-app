@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -6,8 +7,9 @@ import { Check, LucideIcon, X } from 'lucide-react';
 interface ActivityItem {
 	key: string;
 	label: string;
-	value: number | null;
+	value: any;
 	icon?: LucideIcon;
+	status?: string;
 }
 
 interface ActivityCardProps {
@@ -32,20 +34,6 @@ export default function ActivityPortionItemCard({
 	).length;
 	const totalCount = items.length;
 	const progressPercent = Math.round((completedCount / totalCount) * 100);
-
-	// const handleIncrement = (key: string, currentValue: number | null) => {
-	// 	onUpdate(key, (currentValue || 0) + 1);
-	// };
-
-	// const handleDecrement = (key: string, currentValue: number | null) => {
-	// 	if (currentValue && currentValue > 0) {
-	// 		onUpdate(key, currentValue - 1);
-	// 	}
-	// };
-
-	// const handleToggle = (key: string, currentValue: number | null) => {
-	// 	onUpdate(key, currentValue ? null : 1);
-	// };
 
 	return (
 		<motion.div
@@ -87,7 +75,7 @@ export default function ActivityPortionItemCard({
 					{/* Progress bar */}
 					<div className='mt-4 h-2 bg-white/20 rounded-full overflow-hidden relative'>
 						<motion.div
-							className='h-full bg-white/90 rounded-full'
+							className='h-full bg-white rounded-full'
 							initial={{ width: 0 }}
 							animate={{ width: `${progressPercent}%` }}
 							transition={{ duration: 0.8, delay: delay + 0.2 }}
@@ -108,71 +96,104 @@ export default function ActivityPortionItemCard({
 								animate={{ opacity: 1, x: 0 }}
 								transition={{ delay: delay + 0.1 + index * 0.03 }}
 								className={cn(
-									'flex items-center justify-between p-3 rounded-xl transition-all duration-200',
+									'p-3 rounded-xl transition-all duration-200',
 									isCompleted
 										? 'bg-success/10 border border-success/20'
-										: 'bg-secondary/50 hover:bg-secondary border border-transparent'
+										: 'bg-secondary hover:bg-secondary border border-transparent'
 								)}
 							>
-								<div className='flex items-center gap-3'>
-									{ItemIcon && (
-										<div
-											className={cn(
-												'w-8 h-8 rounded-lg flex items-center justify-center',
-												isCompleted
-													? 'bg-success/20 text-success'
-													: 'bg-muted text-muted-foreground'
-											)}
-										>
-											<ItemIcon className='w-4 h-4' />
-										</div>
-									)}
-									<span
-										className={cn(
-											'font-medium text-sm',
-											isCompleted ? 'text-foreground' : 'text-muted-foreground'
-										)}
-									>
-										{item.label}
-									</span>
-								</div>
-
-								<div className='flex items-center gap-2'>
-									{/* Counter controls */}
-									{item?.value !== undefined &&
-										typeof item.value === 'number' && (
-											<div className='flex items-center gap-1 bg-background rounded-lg border p-1'>
-												<span
+								<div className='flex items-center justify-between '>
+									<div className='flex items-center gap-4'>
+										<>
+											{ItemIcon && (
+												<div
 													className={cn(
-														'w-8 text-center font-semibold text-sm',
+														'w-8 h-8 rounded-lg flex items-center justify-center',
 														isCompleted
-															? 'text-success'
-															: 'text-muted-foreground'
+															? 'bg-success/20 text-success'
+															: 'bg-muted text-muted-foreground'
 													)}
 												>
-													{item.value || 0}
-												</span>
-											</div>
-										)}
+													<ItemIcon className='w-4 h-4' />
+												</div>
+											)}
+										</>
+										<span
+											className={cn(
+												'font-medium text-sm',
+												isCompleted
+													? 'text-foreground'
+													: 'text-muted-foreground'
+											)}
+										>
+											{item?.label}
+										</span>
+									</div>
 
-									{/* Check mark */}
-									<button
-										// onClick={() => handleToggle(item.key, item.value)}
+									<div className='flex items-center gap-2'>
+										{/* Counter controls */}
 
-										className={cn(
-											'w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200',
-											isCompleted
-												? 'bg-success text-white'
-												: 'bg-destructive text-primary-foreground'
+										{title !== 'আইটি টাস্ক' && (
+											<>
+												{item?.value !== undefined &&
+													typeof item.value === 'number' && (
+														<div className='flex items-center gap-1 bg-background rounded-lg border p-1'>
+															<span
+																className={cn(
+																	'p-2 text-center font-semibold text-sm',
+																	isCompleted
+																		? 'text-success'
+																		: 'text-muted-foreground'
+																)}
+															>
+																{`${item.value} / 10` || 0}
+															</span>
+														</div>
+													)}
+											</>
 										)}
-									>
-										{isCompleted ? (
-											<Check className='w-4 h-4' />
-										) : (
-											<X className='w-4 h-4' />
+										{/* Check mark */}
+										{title !== 'আইটি টাস্ক' && (
+											<button
+												// onClick={() => handleToggle(item.key, item.value)}
+
+												className={cn(
+													'w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200',
+													isCompleted
+														? 'bg-success text-white'
+														: 'bg-destructive text-primary-foreground'
+												)}
+											>
+												{isCompleted ? (
+													<Check className='w-4 h-4' />
+												) : (
+													<X className='w-4 h-4' />
+												)}
+											</button>
 										)}
-									</button>
+									</div>
 								</div>
+								{title === 'আইটি টাস্ক' && (
+									<div className='space-y-3 mt-2'>
+										<div className='flex justify-between items-center'>
+											<Badge
+												variant='outline'
+												className='text-xs bg-primary/10 text-primary border-primary/20'
+											>
+												{item?.status}
+											</Badge>
+											<span>{item?.value ?? 0}%</span>
+										</div>
+										<div className='h-2 bg-white/20 rounded-full overflow-hidden relative'>
+											<motion.div
+												className='h-full bg-foreground rounded-full'
+												initial={{ width: 0 }}
+												animate={{ width: `${item?.value}%` }}
+												transition={{ duration: 0.8, delay: delay + 0.2 }}
+											/>
+										</div>
+									</div>
+								)}
 							</motion.div>
 						);
 					})}

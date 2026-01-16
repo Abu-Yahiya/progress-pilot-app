@@ -8,6 +8,8 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { User } from '@/gql/graphql';
+import { authApi } from '@/pages/auth/~module/api/auth.api';
 import { Link, useLocation, useNavigate } from '@tanstack/react-router';
 import {
 	Activity,
@@ -35,19 +37,14 @@ const navItems = [
 ];
 
 interface AppNavigationProps {
-	user?: {
-		name: string;
-		email: string;
-		avatar?: string;
-	};
+	user?: User;
 }
 
-export default function AppNavigation({
-	user = { name: 'Alex Johnson', email: 'alex@example.com' },
-}: AppNavigationProps) {
+export default function AppNavigation({ user }: AppNavigationProps) {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const [mobileOpen, setMobileOpen] = useState(false);
+	const { triggerLogout } = authApi();
 
 	const isActive = (href: string) => location.pathname === href;
 
@@ -96,10 +93,10 @@ export default function AppNavigation({
 						<DropdownMenuTrigger asChild>
 							<button className='hidden md:flex items-center gap-2 p-1.5 rounded-lg hover:bg-secondary transition-colors'>
 								<Avatar className='w-8 h-8'>
-									<AvatarImage src={user.avatar} />
+									<AvatarImage src={user?.avatar!} />
 									<AvatarFallback className='bg-primary/10 text-primary font-medium text-sm'>
-										{user.name
-											.split(' ')
+										{user
+											?.name!.split(' ')
 											.map((n) => n[0])
 											.join('')}
 									</AvatarFallback>
@@ -109,8 +106,8 @@ export default function AppNavigation({
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align='end' className='w-56'>
 							<div className='px-3 py-2'>
-								<p className='font-medium'>{user.name}</p>
-								<p className='text-sm text-muted-foreground'>{user.email}</p>
+								<p className='font-medium'>{user?.name}</p>
+								<p className='text-sm text-muted-foreground'>{user?.email}</p>
 							</div>
 							<DropdownMenuSeparator />
 							<DropdownMenuItem>
@@ -119,7 +116,10 @@ export default function AppNavigation({
 							</DropdownMenuItem>
 							<DropdownMenuItem
 								className='text-destructive'
-								onClick={() => navigate({ to: '/' })}
+								onClick={() => {
+									triggerLogout();
+									navigate({ to: '/' });
+								}}
 							>
 								<LogOut className='w-4 h-4 mr-2' />
 								Sign out
@@ -139,18 +139,18 @@ export default function AppNavigation({
 								{/* Mobile Header */}
 								<div className='p-4 border-b border-border flex items-center gap-3'>
 									<Avatar className='w-10 h-10'>
-										<AvatarImage src={user.avatar} />
+										<AvatarImage src={user?.avatar!} />
 										<AvatarFallback className='bg-primary/10 text-primary font-medium'>
-											{user.name
-												.split(' ')
+											{user
+												?.name!.split(' ')
 												.map((n) => n[0])
 												.join('')}
 										</AvatarFallback>
 									</Avatar>
 									<div>
-										<p className='font-medium'>{user.name}</p>
+										<p className='font-medium'>{user?.name}</p>
 										<p className='text-sm text-muted-foreground'>
-											{user.email}
+											{user?.email}
 										</p>
 									</div>
 								</div>
@@ -181,10 +181,7 @@ export default function AppNavigation({
 										Settings
 									</button>
 									<button
-										onClick={() => {
-											setMobileOpen(false);
-											navigate({ to: '/' });
-										}}
+										onClick={triggerLogout}
 										className='flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 w-full transition-colors'
 									>
 										<LogOut className='w-5 h-5' />

@@ -1,23 +1,22 @@
 import { Accordion } from '@/components/ui/accordion';
+import { DailyActivity } from '@/gql/graphql';
 import { CalendarDays } from 'lucide-react';
+import { ReactNode } from 'react';
 import ActivityAccordionItem from './ActivityAccordionItem';
-import { DailyActivity } from './types';
 
 interface ActivityListProps {
 	activities: DailyActivity[];
 	onEdit: (activity: DailyActivity) => void;
-	onDelete: (id: string) => void;
+	onDelete: any;
+	actionBtn: ReactNode;
 }
 
 const ActivityAccordionList = ({
 	activities,
 	onEdit,
 	onDelete,
+	actionBtn,
 }: ActivityListProps) => {
-	// Get the ID of the latest activity
-	const latestActivityId =
-		activities?.length > 0 ? activities[0]._id : undefined;
-
 	if (activities?.length === 0) {
 		return (
 			<div className='flex flex-col items-center justify-center py-16 px-4 bg-card rounded-xl border border-border/50 shadow-soft'>
@@ -25,12 +24,13 @@ const ActivityAccordionList = ({
 					<CalendarDays className='w-10 h-10 text-muted-foreground' />
 				</div>
 				<h3 className='text-lg font-display font-semibold text-foreground mb-2'>
-					কোনো কার্যকলাপ নেই
+					No activity found
 				</h3>
 				<p className='text-muted-foreground text-center font-bangla'>
-					আপনার দৈনিক ইবাদত, জিকির ও ব্যায়াম রেকর্ড করতে নতুন কার্যকলাপ যোগ
-					করুন।
+					Please add activity record for tracking your progress
 				</p>
+
+				{actionBtn}
 			</div>
 		);
 	}
@@ -40,7 +40,7 @@ const ActivityAccordionList = ({
 			<Accordion
 				type='single'
 				collapsible
-				defaultValue={latestActivityId}
+				defaultValue={activities?.[0]?._id!}
 				className='space-y-0'
 			>
 				{activities?.map((activity, index) => (
@@ -50,7 +50,7 @@ const ActivityAccordionList = ({
 						style={{ animationDelay: `${index * 0.05}s` }}
 					>
 						<ActivityAccordionItem
-							activity={activity}
+							activity={activity as DailyActivity}
 							onEdit={onEdit}
 							onDelete={onDelete}
 						/>

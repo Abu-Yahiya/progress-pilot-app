@@ -28,20 +28,22 @@ export const activityApi = (onSuccess?: CallableFunction) => {
 		onError: () => toast.error('Failed to create daily activity'),
 	});
 
-	// const updateExpense = useMutation({
-	// 	mutationFn: (payload: ExpenseApiPayloadType) =>
+	// const DailyActivity = useMutation({
+	// 	mutationFn: (payload: DailyActivity) =>
 	// 		gqlRequest({
 	// 			query: Update_Daily_Activity_Mutation,
 	// 			variables: {
-	// 				updateExpenseCalculationInput: payload,
+	// 				payload: payload,
+	// 				orgUid: import.meta.env.VITE_APP_ORG_UID,
+	// 				userId: session?.user?._id,
 	// 			},
 	// 		}),
 
 	// 	onSuccess: () => {
-	// 		toast.success('Expense update has been success');
+	// 		toast.success('Activity update has been success');
 	// 		onSuccess?.();
 	// 	},
-	// 	onError: () => toast.error('Failed to update expense'),
+	// 	onError: () => toast.error('Failed to update activity'),
 	// });
 
 	// const removeExpense = useMutation({
@@ -68,7 +70,6 @@ export const activityApi = (onSuccess?: CallableFunction) => {
 
 	return {
 		createDailyActivity,
-		// updateExpense,
 		// removeExpense,
 	};
 };

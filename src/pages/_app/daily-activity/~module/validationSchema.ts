@@ -6,7 +6,7 @@ export const dailyActivitySchema = yup.object().shape({
 			.number()
 			.min(1)
 			.max(5)
-			.required()
+			.required('This field is required')
 			.label('জামাতে নামাজ'),
 		extraNamaj: yup.number().min(0).nullable().label('Nafal নামাজ'),
 		ishraq: yup.boolean().label('Ishraq'),
@@ -34,11 +34,11 @@ export const dailyActivitySchema = yup.object().shape({
 		dumbbleCurl: yup.number().min(0).nullable().label('Dummble curl'),
 		others: yup.string(),
 	}),
-	it: yup
+	it_task: yup
 		.array()
 		.of(
 			yup.object({
-				title: yup.string().optional().label('Title'),
+				title: yup.string().required().label('Title'),
 				description: yup.string().optional().label('Description'),
 				progressScore: yup.number().required().label('Progress score'),
 			})

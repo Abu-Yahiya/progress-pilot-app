@@ -59,7 +59,9 @@ export function AppConfirmProvider({
 				<AlertDialog open={isOpen} onOpenChange={setIsOpen}>
 					<AlertDialogContent aria-describedby={undefined}>
 						<AlertDialogHeader>
-							<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+							<AlertDialogTitle className='text-foreground'>
+								Are you absolutely sure?
+							</AlertDialogTitle>
 						</AlertDialogHeader>
 						<AlertDialogDescription asChild>
 							{modalContent.children}

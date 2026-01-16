@@ -1,3 +1,4 @@
+import { useAppConfirm } from '@/components/AppConfirm';
 import {
 	AccordionContent,
 	AccordionItem,
@@ -5,6 +6,7 @@ import {
 } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { DailyActivity } from '@/gql/graphql';
 import { format } from 'date-fns';
 import {
 	BookOpen,
@@ -18,12 +20,11 @@ import {
 } from 'lucide-react';
 import { FC } from 'react';
 import ActivityPortionItemCard from './ActivityPortionItemCard';
-import { DailyActivity } from './types';
 
 interface ActivityCardProps {
 	activity: DailyActivity;
 	onEdit: (activity: DailyActivity) => void;
-	onDelete: (id: string) => void;
+	onDelete: any;
 }
 
 const ActivityAccordionItem: FC<ActivityCardProps> = ({
@@ -31,6 +32,7 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 	onEdit,
 	onDelete,
 }) => {
+	const { show } = useAppConfirm();
 	const formattedDate = activity.createdAt
 		? format(new Date(activity.createdAt), 'EEEE, dd MMMM yyyy')
 		: 'Invalid Date';
@@ -38,11 +40,11 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 	const totalNamaj =
 		(activity.ebadah?.namajWithJamath || 0) +
 		(activity.ebadah?.extraNamaj || 0);
-	const totalJikir =
-		(activity.jikirAjkar?.istigfar || 0) +
-		(activity.jikirAjkar?.durudYunus || 0) +
-		(activity.jikirAjkar?.durud || 0) +
-		(activity.jikirAjkar?.doaTawhid || 0);
+	// const totalJikir =
+	// 	(activity.jikirAjkar?.istigfar || 0) +
+	// 	(activity.jikirAjkar?.durudYunus || 0) +
+	// 	(activity.jikirAjkar?.durud || 0) +
+	// 	(activity.jikirAjkar?.doaTawhid || 0);
 	const totalExercise =
 		(activity.exercise?.pushUp || 0) +
 		(activity.exercise?.squats || 0) +
@@ -60,6 +62,13 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 			icon: exerciseIcons[key],
 		})
 	);
+	const taskItems = activity?.it_task?.map((task, idx) => ({
+		key: idx,
+		label: <span className='!text-xs'>{task?.title?.slice(0, 50)}</span>,
+		value: task?.progressScore,
+		icon: LayoutGrid,
+		status: task?.status,
+	}));
 
 	// Convert data to items for ActivityCard
 	const ebadahItems = Object?.entries(activity?.ebadah! ?? {})?.map(
@@ -82,7 +91,7 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 
 	return (
 		<AccordionItem
-			value={activity._id}
+			value={activity?._id!}
 			className='border border-border/80 !cursor-pointer rounded-xl overflow-hidden shadow-soft mb-3 bg-card'
 		>
 			<AccordionTrigger className='px-4 py-4 hover:no-underline hover:bg-secondary/20 transition-colors'>
@@ -100,19 +109,19 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 									variant='outline'
 									className='text-xs bg-primary/10 text-primary border-primary/20'
 								>
-									নামাজ: {totalNamaj}
+									Namaj: {totalNamaj}
 								</Badge>
 								<Badge
 									variant='outline'
 									className='text-xs bg-accent/10 text-accent border-accent/20'
 								>
-									জিকির: {totalJikir}
+									Exercise: {totalExercise}
 								</Badge>
 								<Badge
 									variant='outline'
 									className='text-xs bg-deep/10 text-deep-glow  border-deep/20'
 								>
-									ব্যায়াম: {totalExercise}
+									Task: {activity?.it_task?.length ?? 0}
 								</Badge>
 							</div>
 						</div>
@@ -132,7 +141,14 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 						<Button
 							// variant='icon'
 							size='icon'
-							onClick={() => onDelete(activity._id)}
+							onClick={() =>
+								show({
+									title: 'Are you sure to delete activity ?',
+									onConfirm() {
+										onDelete.mutate(activity?._id!);
+									},
+								})
+							}
 							className='bg-gradient-to-br from-primary to-deep h-8 w-8 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive'
 						>
 							<Trash2 className='w-4 h-4' />
@@ -141,19 +157,19 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 				</div>
 			</AccordionTrigger>
 			<AccordionContent className='px-5 pb-5'>
-				<div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 pt-2'>
+				<div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2 pt-2'>
 					<ActivityPortionItemCard
-						title='Ebadah'
+						title='আমল এবং ইখলাস'
 						icon={Moon}
 						iconColor='bg-white/20 text-white'
 						bgGradient='bg-gradient-to-r from-primary via-indigo-deep to-deep'
-						items={ebadahItems}
+						items={ebadahItems!}
 						delay={0.1}
 					/>
 
 					{/* Jikir Ajkar Card */}
 					<ActivityPortionItemCard
-						title='Jikir Ajkar'
+						title='আজকার'
 						icon={Heart}
 						iconColor='bg-white/20 text-white'
 						bgGradient='bg-gradient-to-r from-pink-deep via-rose-deep to-red-medium'
@@ -163,31 +179,22 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 
 					{/* Exercise Card */}
 					<ActivityPortionItemCard
-						title='Exercise'
+						title='এক্সারসাইজ'
 						icon={Dumbbell}
 						iconColor='bg-white/20 text-white'
 						bgGradient='bg-gradient-to-r from-orange-deep via-amber-deep to-yellow-medium'
 						// @ts-ignore
-						items={exerciseItems}
+						items={exerciseItems!}
 						delay={0.3}
 					/>
 
 					{/* it task */}
 					<ActivityPortionItemCard
-						title='IT Task'
+						title='আইটি টাস্ক'
 						icon={LayoutGrid}
 						iconColor='bg-white/20 text-white'
 						// @ts-ignore
-						items={[
-							{
-								idx: 'string',
-								label: 'string',
-								// @ts-ignore
-								value: 'number',
-								// @ts-ignore
-								icon: 'LucideIcon',
-							},
-						]}
+						items={taskItems}
 						bgGradient='bg-gradient-to-r from-emerald-deep-1 via-emerald-deep-2 to-teal-deep'
 						delay={0.3}
 					/>
@@ -226,32 +233,32 @@ const exerciseIcons: Record<string, any> = {
 
 // Label mappings
 const ebadahLabels: Record<string, string> = {
-	namajWithJamath: 'Namaj with Jamath',
-	extraNamaj: 'Extra Namaj',
-	ishraq: 'Ishraq Prayer',
-	tahajjud: 'Tahajjud Prayer',
-	tilwat: 'Quran Tilawat',
-	hadith: 'Hadith Reading',
-	readingBook: 'Islamic Book',
-	waqiyah: 'Surah Waqiyah',
-	mulk: 'Surah Mulk',
-	translation: 'Quran Translation',
+	namajWithJamath: 'জামাতে নামাজ',
+	extraNamaj: 'নফল নামাজ',
+	ishraq: 'ইশরাক নামাজ',
+	tahajjud: 'তাহাজ্জুদ নামাজ',
+	tilwat: 'কোরআন তেলাওয়াত',
+	translation: 'কোরআন অনুবাদ',
+	hadith: 'হাদিস',
+	readingBook: 'বই পড়া',
+	waqiyah: 'সূরা ওয়াকিয়া',
+	mulk: 'সূরা মুলক',
 };
 
 const jikirLabels: Record<string, string> = {
-	istigfar: 'Istigfar',
-	durudYunus: 'Durud Yunus',
-	durud: 'Durud Sharif',
-	doaTawhid: 'Doa Tawhid',
+	istigfar: 'ইস্তিগফার',
+	durudYunus: 'দুরুদে ইউনুস',
+	durud: 'দুরূদ শরীফ',
+	doaTawhid: 'জিকরুত তাওহীদ',
 };
 
 const exerciseLabels: Record<string, string> = {
-	pushUp: 'Push Ups',
-	squats: 'Squats',
-	seatUp: 'Sit Ups',
-	running: 'Running (min)',
-	jumpingJack: 'Jumping Jacks',
-	plank: 'Plank (min)',
-	dumbbleCurl: 'Dumbbell Curls',
-	others: 'Other Exercises',
+	pushUp: 'পুশ আপ',
+	squats: 'স্কোয়াটস',
+	seatUp: 'সিট আপ',
+	running: 'রানিং (কিমি)',
+	jumpingJack: 'জাম্পিং জ্যাক',
+	plank: 'প্ল্যাঙ্ক (মিনিট)',
+	dumbbleCurl: 'ডাম্বেল কার্লস',
+	others: 'অন্যান্য',
 };

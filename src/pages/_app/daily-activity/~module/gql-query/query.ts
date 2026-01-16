@@ -38,6 +38,12 @@ export const All_Daily_Activities_Query = gql`
 					dumbbleCurl
 					others
 				}
+				it_task {
+					title
+					description
+					progressScore
+					status
+				}
 				createdAt
 				updatedAt
 			}
