@@ -62,7 +62,7 @@ function RouteComponent() {
 	return (
 		<div className='min-h-screen bg-background flex'>
 			{/* Left Panel - Branding */}
-			<div className='hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-primary to-primary-glow p-12 relative overflow-hidden'>
+			<div className='hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary to-deep p-12 relative overflow-hidden'>
 				<div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0YzAtMiAyLTQgMi00cy0yLTItNC0yYy0yLTIgMi00IDItNHMtNC0yLTQtNGMwLTItMi00LTItNHMyLTItNC0yYy0yLTItMi00LTItNCIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
 
 				<div className='relative z-10 flex flex-col justify-between h-full text-primary-foreground'>
@@ -207,7 +207,7 @@ function RouteComponent() {
 
 								<Button
 									type='submit'
-									variant='hero'
+									// variant='hero'
 									size='lg'
 									className='w-full'
 									disabled={
