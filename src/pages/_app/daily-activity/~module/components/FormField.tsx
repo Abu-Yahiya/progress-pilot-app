@@ -1,19 +1,32 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { DailyActivityFormSchema } from '../validationSchema';
+interface OptionsType {
+	label: string;
+	value: string;
+}
 
 interface FormFieldProps {
 	name: string;
 	label: string;
 	labelBn: string;
-	type: 'number' | 'text' | 'boolean' | 'textarea';
+	type: 'number' | 'text' | 'boolean' | 'textarea' | 'options';
 	register: UseFormRegister<DailyActivityFormSchema>;
 	errors: FieldErrors<DailyActivityFormSchema>;
 	required?: boolean;
+	options?: OptionsType[];
 	placeholder?: string;
 	watch?: (name: string) => boolean;
 	setValue?: (name: string, value: boolean) => void;
@@ -28,6 +41,7 @@ const FormField = ({
 	errors,
 	required = false,
 	placeholder,
+	options,
 	watch,
 	setValue,
 }: FormFieldProps) => {
@@ -47,8 +61,10 @@ const FormField = ({
 		return (
 			<div className='flex items-center justify-between p-4 !bg-dimmed-bg rounded-lg border border-border/30 hover:border-primary/30 transition-colors'>
 				<div className='space-y-0.5'>
-					<Label className='text-sm font-medium text-foreground'>{label}</Label>
-					<p className='text-xs text-muted-foreground font-bangla'>{labelBn}</p>
+					<Label className='text-sm font-medium text-foreground'>
+						{labelBn}
+					</Label>
+					<p className='text-xs text-muted-foreground font-bangla'>{label}</p>
 				</div>
 				<Switch
 					checked={isChecked}
@@ -57,13 +73,37 @@ const FormField = ({
 			</div>
 		);
 	}
+	if (type === 'options') {
+		return (
+			<div className='space-y-2'>
+				<Label htmlFor={name} className='text-sm font-medium text-foreground'>
+					{labelBn}
+					{/* <span className='text-muted-foreground font-bangla'>({label})</span> */}
+				</Label>
+				<Select>
+					<SelectTrigger className='w-full'>
+						<SelectValue placeholder={placeholder} />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectGroup>
+							{options?.map((option, index) => (
+								<SelectItem key={index} value={option?.value}>
+									{option?.value}
+								</SelectItem>
+							))}
+						</SelectGroup>
+					</SelectContent>
+				</Select>
+			</div>
+		);
+	}
 
 	if (type === 'textarea') {
 		return (
 			<div className='col-span-full space-y-2'>
 				<Label htmlFor={name} className='text-sm font-medium text-foreground'>
-					{label}{' '}
-					<span className='text-muted-foreground font-bangla'>({labelBn})</span>
+					{labelBn}{' '}
+					{/* <span className='text-muted-foreground font-bangla'>({labelBn})</span> */}
 					{required && <span className='text-destructive ml-1'>*</span>}
 				</Label>
 				<Textarea
@@ -72,7 +112,7 @@ const FormField = ({
 					placeholder={placeholder}
 					className={cn(
 						'bg-background text-primary border-border/50 focus:border-primary resize-none',
-						errorMessage && 'border-destructive'
+						errorMessage && 'border-destructive',
 					)}
 				/>
 				{errorMessage && (
@@ -85,18 +125,19 @@ const FormField = ({
 	return (
 		<div className='space-y-2'>
 			<Label htmlFor={name} className='text-sm font-medium text-foreground'>
-				{label}{' '}
-				<span className='text-muted-foreground font-bangla'>({labelBn})</span>
+				{labelBn}{' '}
+				{/* <span className='text-muted-foreground font-bangla'>({labelBn})</span> */}
 				{required && <span className='text-destructive ml-1'>*</span>}
 			</Label>
 			<Input
 				id={name}
+				min={type === 'number' ? 0 : ''}
 				type={type}
 				{...register(name as any, { valueAsNumber: type === 'number' })}
 				placeholder={placeholder}
 				className={cn(
 					'bg-background text-primary border-border/50 focus:border-primary',
-					errorMessage && 'border-destructive'
+					errorMessage && 'border-destructive',
 				)}
 			/>
 			{errorMessage && (

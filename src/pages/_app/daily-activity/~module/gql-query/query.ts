@@ -14,13 +14,31 @@ export const All_Daily_Activities_Query = gql`
 					namajWithJamath
 					extraNamaj
 					ishraq
+					kahf
 					tahajjud
-					tilwat
+					tilwat {
+						count
+						description
+						type
+					}
 					hadith
-					readingBook
+					readingBook {
+						count
+						description
+						type
+					}
 					waqiyah
 					mulk
-					translation
+					translation {
+						count
+						description
+						type
+					}
+					tafsir {
+						count
+						description
+						type
+					}
 				}
 				jikirAjkar {
 					istigfar

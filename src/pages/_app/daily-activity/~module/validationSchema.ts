@@ -11,12 +11,28 @@ export const dailyActivitySchema = yup.object().shape({
 		extraNamaj: yup.number().min(0).nullable().label('Nafal নামাজ'),
 		ishraq: yup.boolean().label('Ishraq'),
 		tahajjud: yup.boolean().label('Tahajjud'),
-		tilwat: yup.string().label('Tilwat'),
+		tilwat: yup.object().shape({
+			count: yup.number().nullable().optional().label('Count'),
+			type: yup.string().label('Ayah/Page/Para'),
+			description: yup.string().label('Tilwat in details'),
+		}),
 		hadith: yup.number().min(0).nullable().label('Hadith'),
-		readingBook: yup.string().label('Book reading'),
+		readingBook: yup.object().shape({
+			count: yup.number().nullable().optional().label('Page'),
+			description: yup.string().label('Reading in details'),
+		}),
 		waqiyah: yup.boolean(),
 		mulk: yup.boolean(),
-		translation: yup.string().label('Translation'),
+		kahf: yup.boolean(),
+		translation: yup.object().shape({
+			count: yup.number().nullable().optional().label('Count'),
+			type: yup.string().label('Ayah/Page/Para'),
+			description: yup.string().label('Translation in details'),
+		}),
+		tafsir: yup.object().shape({
+			count: yup.number().nullable().optional().label('Count'),
+			description: yup.string().label('Translation in details'),
+		}),
 	}),
 	jikirAjkar: yup.object().shape({
 		istigfar: yup.number().min(0).nullable().label('Istigfar'),
@@ -41,7 +57,7 @@ export const dailyActivitySchema = yup.object().shape({
 				title: yup.string().required().label('Title'),
 				description: yup.string().optional().label('Description'),
 				progressScore: yup.number().required().label('Progress score'),
-			})
+			}),
 		)
 		.optional()
 		.label('IT works'),

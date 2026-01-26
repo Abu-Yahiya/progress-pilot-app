@@ -55,12 +55,28 @@ const DailyActivityForm = ({
 				extraNamaj: initialData?.ebadah?.extraNamaj ?? 0,
 				ishraq: initialData?.ebadah?.ishraq ?? false,
 				tahajjud: initialData?.ebadah?.tahajjud ?? false,
-				tilwat: initialData?.ebadah?.tilwat ?? '',
+				tilwat: {
+					count: initialData?.ebadah?.tilwat?.count!,
+					type: initialData?.ebadah?.tilwat?.type!,
+					description: initialData?.ebadah?.tilwat?.description!,
+				},
 				hadith: initialData?.ebadah?.hadith ?? 0,
-				readingBook: initialData?.ebadah?.readingBook ?? '',
+				readingBook: {
+					count: initialData?.ebadah?.readingBook?.count!,
+					description: initialData?.ebadah?.readingBook?.description!,
+				},
 				waqiyah: initialData?.ebadah?.waqiyah ?? false,
 				mulk: initialData?.ebadah?.mulk ?? false,
-				translation: initialData?.ebadah?.translation ?? '',
+				kahf: initialData?.ebadah?.kahf ?? false,
+				translation: {
+					count: initialData?.ebadah?.translation?.count!,
+					type: initialData?.ebadah?.translation?.type!,
+					description: initialData?.ebadah?.translation?.description!,
+				},
+				tafsir: {
+					count: initialData?.ebadah?.tafsir?.count!,
+					description: initialData?.ebadah?.tafsir?.description!,
+				},
 			},
 			jikirAjkar: {
 				istigfar: initialData?.jikirAjkar?.istigfar ?? 0,
@@ -124,103 +140,214 @@ const DailyActivityForm = ({
 							</div>
 						</div>
 					</AccordionTrigger>
-					<AccordionContent className='px-5 pb-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-						<FormField
-							name='ebadah.namajWithJamath'
-							label='Namaj with Jamath'
-							labelBn='জামাতে নামাজ'
-							type='number'
-							register={register}
-							errors={errors}
-							required
-							placeholder='0-5'
-						/>
-						<FormField
-							name='ebadah.extraNamaj'
-							label='Extra Namaj'
-							labelBn='নফল নামাজ'
-							type='number'
-							register={register}
-							errors={errors}
-							placeholder='রাকাত সংখ্যা'
-						/>
-						<FormField
-							name='ebadah.hadith'
-							label='Hadith'
-							labelBn='হাদিস পড়া'
-							type='number'
-							register={register}
-							errors={errors}
-							placeholder='সংখ্যা'
-						/>
-						<FormField
-							name='ebadah.ishraq'
-							label='Ishraq'
-							labelBn='ইশরাক'
-							type='boolean'
-							register={register}
-							errors={errors}
-							watch={watch as any}
-							setValue={setValue as any}
-						/>
-						<FormField
-							name='ebadah.tahajjud'
-							label='Tahajjud'
-							labelBn='তাহাজ্জুদ'
-							type='boolean'
-							register={register}
-							errors={errors}
-							watch={watch as any}
-							setValue={setValue as any}
-						/>
-						<FormField
-							name='ebadah.waqiyah'
-							label='Surah Waqiyah'
-							labelBn='সূরা ওয়াকিয়াহ'
-							type='boolean'
-							register={register}
-							errors={errors}
-							watch={watch as any}
-							setValue={setValue as any}
-						/>
-						<FormField
-							name='ebadah.mulk'
-							label='Surah Mulk'
-							labelBn='সূরা মুলক'
-							type='boolean'
-							register={register}
-							errors={errors}
-							watch={watch as any}
-							setValue={setValue as any}
-						/>
-						<FormField
-							name='ebadah.tilwat'
-							label='Tilawat'
-							labelBn='তিলাওয়াত'
-							type='text'
-							register={register}
-							errors={errors}
-							placeholder='সূরা/পারা নাম'
-						/>
-						<FormField
-							name='ebadah.readingBook'
-							label='Reading Book'
-							labelBn='কিতাব পড়া'
-							type='text'
-							register={register}
-							errors={errors}
-							placeholder='বইয়ের নাম'
-						/>
-						<FormField
-							name='ebadah.translation'
-							label='Translation'
-							labelBn='তরজমা'
-							type='textarea'
-							register={register}
-							errors={errors}
-							placeholder='আয়াত তরজমা বা নোট...'
-						/>
-					</AccordionContent>{' '}
+					<AccordionContent className='px-5 pb-5'>
+						<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+							<FormField
+								name='ebadah.namajWithJamath'
+								label='Namaj with Jamath'
+								labelBn='জামাতে নামাজ'
+								type='number'
+								register={register}
+								errors={errors}
+								required
+								placeholder='0-5'
+							/>
+							<FormField
+								name='ebadah.extraNamaj'
+								label='Extra Namaj'
+								labelBn='নফল নামাজ'
+								type='number'
+								register={register}
+								errors={errors}
+								placeholder='রাকাত সংখ্যা'
+							/>
+							<FormField
+								name='ebadah.hadith'
+								label='Hadith'
+								labelBn='হাদিস পড়া'
+								type='number'
+								register={register}
+								errors={errors}
+								placeholder='সংখ্যা'
+							/>
+							<FormField
+								name='ebadah.ishraq'
+								label='Ishraq'
+								labelBn='ইশরাক'
+								type='boolean'
+								register={register}
+								errors={errors}
+								watch={watch as any}
+								setValue={setValue as any}
+							/>
+							<FormField
+								name='ebadah.tahajjud'
+								label='Tahajjud'
+								labelBn='তাহাজ্জুদ'
+								type='boolean'
+								register={register}
+								errors={errors}
+								watch={watch as any}
+								setValue={setValue as any}
+							/>
+							<FormField
+								name='ebadah.waqiyah'
+								label='Surah Waqiyah'
+								labelBn='সূরা ওয়াকিয়াহ'
+								type='boolean'
+								register={register}
+								errors={errors}
+								watch={watch as any}
+								setValue={setValue as any}
+							/>
+							<FormField
+								name='ebadah.mulk'
+								label='Surah Mulk'
+								labelBn='সূরা মুলক'
+								type='boolean'
+								register={register}
+								errors={errors}
+								watch={watch as any}
+								setValue={setValue as any}
+							/>
+							<FormField
+								name='ebadah.kahf'
+								label='Surah Kahf'
+								labelBn='সূরা কাহ্ফ '
+								type='boolean'
+								register={register}
+								errors={errors}
+								watch={watch as any}
+								setValue={setValue as any}
+							/>
+						</div>
+						<div className='grid grid-cols-1 lg:grid-cols-2 gap-4 my-4'>
+							<div className='grid grid-cols-1 md:grid-cols-3 gap-4 px-3 py-4 rounded-md bg-primary/20'>
+								<FormField
+									name='ebadah.tilwat.count'
+									label='Tilawat'
+									labelBn='তিলাওয়াত'
+									type='number'
+									register={register}
+									errors={errors}
+									placeholder='কত পৃষ্ঠা ?'
+								/>
+								<FormField
+									name='ebadah.tilwat.type'
+									label='Ayah/Page/Para'
+									labelBn='আয়াহ/পেজ/পারা'
+									type='options'
+									options={[
+										{
+											label: 'Ayah',
+											value: 'Ayah',
+										},
+										{ label: 'Page', value: 'Page' },
+										{
+											label: 'Para',
+											value: 'Para',
+										},
+									]}
+									register={register}
+									errors={errors}
+									placeholder='আয়াহ/পেজ/পারা'
+								/>
+								<FormField
+									name='ebadah.tilwat.description'
+									label='Tilwat in details'
+									labelBn='বিস্তারিত লিখুন'
+									type='text'
+									register={register}
+									errors={errors}
+									placeholder='সূরা আল-বাকারা: ১০০ - ২০০ আয়াত'
+								/>
+							</div>
+							<div className='grid grid-cols-1 md:grid-cols-2 gap-4 px-3 py-4 rounded-md bg-primary/20'>
+								<FormField
+									name='ebadah.tafsir.count'
+									label='Tafsir'
+									labelBn='তাফসীর'
+									type='number'
+									register={register}
+									errors={errors}
+									placeholder='কত পৃষ্ঠা ?'
+								/>
+
+								<FormField
+									name='ebadah.tafsir.description'
+									label='Tafsir in details'
+									labelBn='বিস্তারিত লিখুন'
+									type='text'
+									register={register}
+									errors={errors}
+									placeholder='তাফসীরে তাওবা: ৭০ - ৮০ পৃষ্ঠা '
+								/>
+							</div>
+						</div>
+						<div className='grid grid-cols-1 lg:grid-cols-2 gap-4 my-4'>
+							<div className='grid grid-cols-1 md:grid-cols-2 gap-4 px-3 py-4 rounded-md bg-primary/20'>
+								<FormField
+									name='ebadah.readingBook.count'
+									label='Reading Book'
+									labelBn='বই পড়া'
+									type='number'
+									register={register}
+									errors={errors}
+									placeholder='কত পৃষ্ঠা ?'
+								/>
+
+								<FormField
+									name='ebadah.readingBook.description'
+									label='Reading book in details'
+									labelBn='বিস্তারিত লিখুন'
+									type='text'
+									register={register}
+									errors={errors}
+									placeholder='মুহাম্মদ সাঃ এর যুদ্ধ কৌশল: ২০ - ৩০ পৃষ্ঠা'
+								/>
+							</div>
+							<div className='grid grid-cols-1 md:grid-cols-3 gap-4 px-3 py-4 rounded-md bg-primary/20'>
+								<FormField
+									name='ebadah.translation.count'
+									label='Translation'
+									labelBn='কোরআন অনুবাদ'
+									type='number'
+									register={register}
+									errors={errors}
+									placeholder='কত পৃষ্ঠা ?'
+								/>
+								<FormField
+									name='ebadah.translation.type'
+									label='Ayah/Page/Para'
+									labelBn='আয়াহ/পেজ/পারা'
+									type='options'
+									options={[
+										{
+											label: 'Ayah',
+											value: 'Ayah',
+										},
+										{ label: 'Page', value: 'Page' },
+										{
+											label: 'Para',
+											value: 'Para',
+										},
+									]}
+									register={register}
+									errors={errors}
+									placeholder='আয়াহ/পেজ/পারা'
+								/>
+								<FormField
+									name='ebadah.translation.description'
+									label='Translation in details'
+									labelBn='বিস্তারিত লিখুন'
+									type='text'
+									register={register}
+									errors={errors}
+									placeholder='সূরা আল-বাকারা: ১২০ - ১৩০ আয়াত'
+								/>
+							</div>
+						</div>
+					</AccordionContent>
 				</AccordionItem>
 
 				<AccordionItem

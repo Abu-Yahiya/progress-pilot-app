@@ -19,10 +19,10 @@ import {
 	FileText,
 	LogOut,
 	Menu,
+	MonitorCog,
 	Rocket,
 	Settings,
 	Trophy,
-	Users,
 } from 'lucide-react';
 import { useState } from 'react';
 import { ModeToggler } from './ModeToggler';
@@ -33,7 +33,7 @@ const navItems = [
 	{ icon: Activity, label: 'Daily Activity', href: '/daily-activity' },
 	{ icon: Trophy, label: 'Leaderboard', href: '/leaderboard' },
 	{ icon: FileText, label: 'Reports', href: '/reports' },
-	{ icon: Users, label: 'Team', href: '/team' },
+	{ icon: MonitorCog, label: 'Activity Settings', href: '/activity-settings' },
 ];
 
 interface AppNavigationProps {

@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRouteImport } from './pages/__root'
 import { Route as AppRouteImport } from './pages/_app'
 import { Route as AuthLoginRouteImport } from './pages/auth/login'
+import { Route as AppActivitySettingsIndexRouteImport } from './pages/_app/activity-settings/index'
 
 const AppIndexLazyRouteImport = createFileRoute('/_app/')()
 const AppDailyActivityIndexLazyRouteImport = createFileRoute(
@@ -41,15 +42,23 @@ const AppDailyActivityIndexLazyRoute =
   } as any).lazy(() =>
     import('./pages/_app/daily-activity/index.lazy').then((d) => d.Route),
   )
+const AppActivitySettingsIndexRoute =
+  AppActivitySettingsIndexRouteImport.update({
+    id: '/activity-settings/',
+    path: '/activity-settings/',
+    getParentRoute: () => AppRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginRoute
   '/': typeof AppIndexLazyRoute
+  '/activity-settings': typeof AppActivitySettingsIndexRoute
   '/daily-activity': typeof AppDailyActivityIndexLazyRoute
 }
 export interface FileRoutesByTo {
   '/auth/login': typeof AuthLoginRoute
   '/': typeof AppIndexLazyRoute
+  '/activity-settings': typeof AppActivitySettingsIndexRoute
   '/daily-activity': typeof AppDailyActivityIndexLazyRoute
 }
 export interface FileRoutesById {
@@ -57,14 +66,21 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
   '/_app/': typeof AppIndexLazyRoute
+  '/_app/activity-settings/': typeof AppActivitySettingsIndexRoute
   '/_app/daily-activity/': typeof AppDailyActivityIndexLazyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/auth/login' | '/' | '/daily-activity'
+  fullPaths: '/auth/login' | '/' | '/activity-settings' | '/daily-activity'
   fileRoutesByTo: FileRoutesByTo
-  to: '/auth/login' | '/' | '/daily-activity'
-  id: '__root__' | '/_app' | '/auth/login' | '/_app/' | '/_app/daily-activity/'
+  to: '/auth/login' | '/' | '/activity-settings' | '/daily-activity'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/auth/login'
+    | '/_app/'
+    | '/_app/activity-settings/'
+    | '/_app/daily-activity/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -102,16 +118,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDailyActivityIndexLazyRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/activity-settings/': {
+      id: '/_app/activity-settings/'
+      path: '/activity-settings'
+      fullPath: '/activity-settings'
+      preLoaderRoute: typeof AppActivitySettingsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
   AppIndexLazyRoute: typeof AppIndexLazyRoute
+  AppActivitySettingsIndexRoute: typeof AppActivitySettingsIndexRoute
   AppDailyActivityIndexLazyRoute: typeof AppDailyActivityIndexLazyRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppIndexLazyRoute: AppIndexLazyRoute,
+  AppActivitySettingsIndexRoute: AppActivitySettingsIndexRoute,
   AppDailyActivityIndexLazyRoute: AppDailyActivityIndexLazyRoute,
 }
 
