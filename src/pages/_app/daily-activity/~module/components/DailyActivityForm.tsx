@@ -19,12 +19,12 @@ import {
 	X,
 } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
+import FormField from '../../../../../components/common/FormField';
 import {
 	DailyActivityFormSchema,
 	dailyActivitySchema,
 } from '../validationSchema';
 import EmptyTaskState from './EmptyTaskState';
-import FormField from './FormField';
 
 interface DailyActivityFormProps {
 	onSubmit: any;
@@ -53,28 +53,24 @@ const DailyActivityForm = ({
 			ebadah: {
 				namajWithJamath: initialData?.ebadah?.namajWithJamath! ?? null,
 				extraNamaj: initialData?.ebadah?.extraNamaj ?? 0,
-				ishraq: initialData?.ebadah?.ishraq ?? false,
-				tahajjud: initialData?.ebadah?.tahajjud ?? false,
+				kajaNamaj: initialData?.ebadah?.kajaNamaj ?? 0,
 				tilwat: {
-					count: initialData?.ebadah?.tilwat?.count!,
+					count: initialData?.ebadah?.tilwat?.count ?? 0,
 					type: initialData?.ebadah?.tilwat?.type!,
 					description: initialData?.ebadah?.tilwat?.description!,
 				},
 				hadith: initialData?.ebadah?.hadith ?? 0,
 				readingBook: {
-					count: initialData?.ebadah?.readingBook?.count!,
+					count: initialData?.ebadah?.readingBook?.count ?? 0,
 					description: initialData?.ebadah?.readingBook?.description!,
 				},
-				waqiyah: initialData?.ebadah?.waqiyah ?? false,
-				mulk: initialData?.ebadah?.mulk ?? false,
-				kahf: initialData?.ebadah?.kahf ?? false,
 				translation: {
-					count: initialData?.ebadah?.translation?.count!,
+					count: initialData?.ebadah?.translation?.count ?? 0,
 					type: initialData?.ebadah?.translation?.type!,
 					description: initialData?.ebadah?.translation?.description!,
 				},
 				tafsir: {
-					count: initialData?.ebadah?.tafsir?.count!,
+					count: initialData?.ebadah?.tafsir?.count ?? 0,
 					description: initialData?.ebadah?.tafsir?.description!,
 				},
 			},
@@ -83,6 +79,11 @@ const DailyActivityForm = ({
 				durudYunus: initialData?.jikirAjkar?.durudYunus ?? 0,
 				durud: initialData?.jikirAjkar?.durud ?? 0,
 				doaTawhid: initialData?.jikirAjkar?.doaTawhid ?? 0,
+				ishraq: initialData?.jikirAjkar?.ishraq ?? false,
+				tahajjud: initialData?.jikirAjkar?.tahajjud ?? false,
+				waqiyah: initialData?.jikirAjkar?.waqiyah ?? false,
+				mulk: initialData?.jikirAjkar?.mulk ?? false,
+				kahf: initialData?.jikirAjkar?.kahf ?? false,
 			},
 			exercise: {
 				pushUp: initialData?.exercise?.pushUp ?? 0,
@@ -153,6 +154,16 @@ const DailyActivityForm = ({
 								placeholder='0-5'
 							/>
 							<FormField
+								name='ebadah.kajaNamaj'
+								label='Kaja Namaj'
+								labelBn='কাজা নামাজ'
+								type='number'
+								register={register}
+								errors={errors}
+								required
+								placeholder='0-5'
+							/>
+							<FormField
 								name='ebadah.extraNamaj'
 								label='Extra Namaj'
 								labelBn='নফল নামাজ'
@@ -169,56 +180,6 @@ const DailyActivityForm = ({
 								register={register}
 								errors={errors}
 								placeholder='সংখ্যা'
-							/>
-							<FormField
-								name='ebadah.ishraq'
-								label='Ishraq'
-								labelBn='ইশরাক'
-								type='boolean'
-								register={register}
-								errors={errors}
-								watch={watch as any}
-								setValue={setValue as any}
-							/>
-							<FormField
-								name='ebadah.tahajjud'
-								label='Tahajjud'
-								labelBn='তাহাজ্জুদ'
-								type='boolean'
-								register={register}
-								errors={errors}
-								watch={watch as any}
-								setValue={setValue as any}
-							/>
-							<FormField
-								name='ebadah.waqiyah'
-								label='Surah Waqiyah'
-								labelBn='সূরা ওয়াকিয়াহ'
-								type='boolean'
-								register={register}
-								errors={errors}
-								watch={watch as any}
-								setValue={setValue as any}
-							/>
-							<FormField
-								name='ebadah.mulk'
-								label='Surah Mulk'
-								labelBn='সূরা মুলক'
-								type='boolean'
-								register={register}
-								errors={errors}
-								watch={watch as any}
-								setValue={setValue as any}
-							/>
-							<FormField
-								name='ebadah.kahf'
-								label='Surah Kahf'
-								labelBn='সূরা কাহ্ফ '
-								type='boolean'
-								register={register}
-								errors={errors}
-								watch={watch as any}
-								setValue={setValue as any}
 							/>
 						</div>
 						<div className='grid grid-cols-1 lg:grid-cols-2 gap-4 my-4'>
@@ -366,7 +327,7 @@ const DailyActivityForm = ({
 							</div>
 						</div>
 					</AccordionTrigger>
-					<AccordionContent className='px-5 pb-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+					<AccordionContent className='px-5 pb-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
 						<FormField
 							name='jikirAjkar.istigfar'
 							label='Istigfar'
@@ -402,6 +363,56 @@ const DailyActivityForm = ({
 							register={register}
 							errors={errors}
 							placeholder='সংখ্যা'
+						/>
+						<FormField
+							name='jikirAjkar.ishraq'
+							label='Ishraq'
+							labelBn='ইশরাক'
+							type='boolean'
+							register={register}
+							errors={errors}
+							watch={watch as any}
+							setValue={setValue as any}
+						/>
+						<FormField
+							name='jikirAjkar.tahajjud'
+							label='Tahajjud'
+							labelBn='তাহাজ্জুদ'
+							type='boolean'
+							register={register}
+							errors={errors}
+							watch={watch as any}
+							setValue={setValue as any}
+						/>
+						<FormField
+							name='jikirAjkar.waqiyah'
+							label='Surah Waqiyah'
+							labelBn='সূরা ওয়াকিয়াহ'
+							type='boolean'
+							register={register}
+							errors={errors}
+							watch={watch as any}
+							setValue={setValue as any}
+						/>
+						<FormField
+							name='jikirAjkar.mulk'
+							label='Surah Mulk'
+							labelBn='সূরা মুলক'
+							type='boolean'
+							register={register}
+							errors={errors}
+							watch={watch as any}
+							setValue={setValue as any}
+						/>
+						<FormField
+							name='jikirAjkar.kahf'
+							label='Surah Kahf'
+							labelBn='সূরা কাহ্ফ '
+							type='boolean'
+							register={register}
+							errors={errors}
+							watch={watch as any}
+							setValue={setValue as any}
 						/>
 					</AccordionContent>
 				</AccordionItem>

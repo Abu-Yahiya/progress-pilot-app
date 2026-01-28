@@ -8,9 +8,9 @@ export const dailyActivitySchema = yup.object().shape({
 			.max(5)
 			.required('This field is required')
 			.label('জামাতে নামাজ'),
+		kajaNamaj: yup.number().min(0).nullable().label('Kaja নামাজ'),
 		extraNamaj: yup.number().min(0).nullable().label('Nafal নামাজ'),
-		ishraq: yup.boolean().label('Ishraq'),
-		tahajjud: yup.boolean().label('Tahajjud'),
+
 		tilwat: yup.object().shape({
 			count: yup.number().nullable().optional().label('Count'),
 			type: yup.string().label('Ayah/Page/Para'),
@@ -21,9 +21,7 @@ export const dailyActivitySchema = yup.object().shape({
 			count: yup.number().nullable().optional().label('Page'),
 			description: yup.string().label('Reading in details'),
 		}),
-		waqiyah: yup.boolean(),
-		mulk: yup.boolean(),
-		kahf: yup.boolean(),
+
 		translation: yup.object().shape({
 			count: yup.number().nullable().optional().label('Count'),
 			type: yup.string().label('Ayah/Page/Para'),
@@ -39,6 +37,11 @@ export const dailyActivitySchema = yup.object().shape({
 		durudYunus: yup.number().min(0).nullable().label('Durude Yunus'),
 		durud: yup.number().min(0).nullable().label('Durud'),
 		doaTawhid: yup.number().min(0).nullable('Doay Tawhid'),
+		ishraq: yup.boolean().label('Ishraq'),
+		tahajjud: yup.boolean().label('Tahajjud'),
+		waqiyah: yup.boolean(),
+		mulk: yup.boolean(),
+		kahf: yup.boolean(),
 	}),
 	exercise: yup.object().shape({
 		pushUp: yup.number().min(0).nullable().label('Pushup'),

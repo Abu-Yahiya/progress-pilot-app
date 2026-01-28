@@ -42,13 +42,9 @@ function RouteComponent() {
 	const [ebadah] = useState<EbadahInputDto>({
 		namajWithJamath: null,
 		extraNamaj: null,
-		ishraq: null,
-		tahajjud: null,
 		tilwat: null,
 		hadith: null,
 		readingBook: null,
-		waqiyah: null,
-		mulk: null,
 		translation: null,
 	});
 
@@ -92,7 +88,7 @@ function RouteComponent() {
 
 	// Calculate summaries for DailySummary
 	const getCompletedCount = (
-		data: EbadahInputDto | JikirInputDto | ExerciseInputDto
+		data: EbadahInputDto | JikirInputDto | ExerciseInputDto,
 		// @ts-ignore
 	) => Object.values(data).filter((v) => v !== null && v > 0).length;
 
@@ -126,8 +122,8 @@ function RouteComponent() {
 	const overallProgress = Math.round(
 		categorySummaries.reduce(
 			(acc, cat) => acc + (cat.completed / cat.total) * 100,
-			0
-		) / categorySummaries.length
+			0,
+		) / categorySummaries.length,
 	);
 
 	const today = new Date().toLocaleDateString('en-US', {

@@ -82,31 +82,29 @@ function RouteComponent() {
 
 					{/* Charts and Widgets Grid */}
 					<div className='grid lg:grid-cols-3 gap-6'>
-						{/* Learning Chart */}
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ duration: 0.5, delay: 0.2 }}
-							className='lg:col-span-2'
+							className='lg:col-span-2 min-w-0 overflow-hidden'
 						>
 							<LearningChart />
 						</motion.div>
 
-						{/* Leaderboard Widget */}
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.5, delay: 0.3 }}
+							transition={{ duration: 0.5, delay: 0.2 }}
+							className='min-w-0 overflow-hidden'
 						>
 							<LeaderboardWidget />
 						</motion.div>
 
-						{/* Recent Activity */}
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.5, delay: 0.4 }}
-							className='lg:col-span-3'
+							transition={{ duration: 0.5, delay: 0.2 }}
+							className='lg:col-span-3 min-w-0 overflow-hidden'
 						>
 							<RecentActivity />
 						</motion.div>

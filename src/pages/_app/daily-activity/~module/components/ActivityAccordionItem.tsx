@@ -10,12 +10,16 @@ import { DailyActivity } from '@/gql/graphql';
 import { format } from 'date-fns';
 import {
 	BookOpen,
+	BookOpenText,
 	Dumbbell,
 	Edit,
 	Heart,
 	LayoutGrid,
 	Moon,
+	NotebookPen,
+	ShieldCheck,
 	Sun,
+	SunMoon,
 	Trash2,
 } from 'lucide-react';
 import { FC } from 'react';
@@ -51,16 +55,51 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 		(activity.exercise?.seatUp || 0) +
 		(activity.exercise?.jumpingJack || 0);
 
-	// const taskItems = ['Propgress Pilot Learning Module Done'].map(
-	// 	([data, index]) => ({ index })
-	// );
+	// Convert data to items for ActivityCard
+	// delete activity?.ebadah?.ishraq;
+	// delete activity?.ebadah?.kahf;
+	// delete activity?.ebadah?.mulk;
+	// delete activity?.ebadah?.waqiyah;
+	// delete activity?.ebadah?.tahajjud;
+
+	const ebadahItems = Object?.entries(activity?.ebadah! ?? {})?.map(
+		([key, value]) => ({
+			key,
+			label: ebadahLabels[key] || key,
+			// @ts-ignore
+			value: value?.count ?? value,
+			icon: ebadahIcons[key],
+		}),
+	);
+
+	// const jikrAjkar = activity?.jikirAjkar!;
+	// // @ts-ignore
+	// jikrAjkar.ishraq = activity?.ebadah?.ishraq;
+	// // @ts-ignore
+	// jikrAjkar.kahf = activity?.ebadah?.kahf;
+	// // @ts-ignore
+	// jikrAjkar.mulk = activity?.ebadah?.mulk;
+	// // @ts-ignore
+	// jikrAjkar.waqiyah = activity?.ebadah?.waqiyah;
+	// // @ts-ignore
+	// jikrAjkar.tahajjud = activity?.ebadah?.tahajjud;
+
+	const jikirItems = Object?.entries(activity?.jikirAjkar! ?? {})?.map(
+		([key, value]) => ({
+			key,
+			label: jikirLabels[key] || key,
+			value,
+			icon: jikrIcons[key],
+		}),
+	);
+
 	const exerciseItems = Object?.entries(activity?.exercise! ?? {})?.map(
 		([key, value]) => ({
 			key,
 			label: exerciseLabels[key] || key,
 			value,
 			icon: exerciseIcons[key],
-		})
+		}),
 	);
 	const taskItems = activity?.it_task?.map((task, idx) => ({
 		key: idx,
@@ -69,26 +108,6 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 		icon: LayoutGrid,
 		status: task?.status,
 	}));
-
-	// Convert data to items for ActivityCard
-	const ebadahItems = Object?.entries(activity?.ebadah! ?? {})?.map(
-		([key, value]) => ({
-			key,
-			label: ebadahLabels[key] || key,
-			value,
-			icon: ebadahIcons[key],
-		})
-	);
-
-	const jikirItems = Object?.entries(activity?.jikirAjkar! ?? {})?.map(
-		([key, value]) => ({
-			key,
-			label: jikirLabels[key] || key,
-			value,
-			icon: Heart,
-		})
-	);
-
 	return (
 		<AccordionItem
 			value={activity?._id!}
@@ -159,8 +178,8 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 			<AccordionContent className='px-5 pb-5'>
 				<div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2 pt-2'>
 					<ActivityPortionItemCard
-						title='আমল এবং ইখলাস'
-						icon={Moon}
+						title='একাডেমিক'
+						icon={NotebookPen}
 						iconColor='bg-white/20 text-white'
 						bgGradient='bg-gradient-to-r from-primary via-indigo-deep to-deep'
 						items={ebadahItems!}
@@ -169,7 +188,7 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 
 					{/* Jikir Ajkar Card */}
 					<ActivityPortionItemCard
-						title='আজকার'
+						title='ইবাদাহ'
 						icon={Heart}
 						iconColor='bg-white/20 text-white'
 						bgGradient='bg-gradient-to-r from-pink-deep via-rose-deep to-red-medium'
@@ -209,15 +228,24 @@ export default ActivityAccordionItem;
 // Icons for specific activities
 const ebadahIcons: Record<string, any> = {
 	namajWithJamath: Moon,
+	kajaNamaj: Moon,
 	extraNamaj: Moon,
-	ishraq: Sun,
-	tahajjud: Moon,
-	tilwat: BookOpen,
-	hadith: BookOpen,
+	tilwat: BookOpenText,
+	hadith: BookOpenText,
 	readingBook: BookOpen,
-	waqiyah: BookOpen,
-	mulk: BookOpen,
-	translation: BookOpen,
+	translation: BookOpenText,
+	tafsir: BookOpenText,
+};
+const jikrIcons: Record<string, any> = {
+	istigfar: Heart,
+	durudYunus: Heart,
+	durud: Heart,
+	doaTawhid: Heart,
+	ishraq: Sun,
+	tahajjud: SunMoon,
+	waqiyah: BookOpenText,
+	mulk: BookOpenText,
+	kahf: ShieldCheck,
 };
 
 const exerciseIcons: Record<string, any> = {
@@ -234,15 +262,13 @@ const exerciseIcons: Record<string, any> = {
 // Label mappings
 const ebadahLabels: Record<string, string> = {
 	namajWithJamath: 'জামাতে নামাজ',
+	kajaNamaj: 'কাজা নামাজ',
 	extraNamaj: 'নফল নামাজ',
-	ishraq: 'ইশরাক নামাজ',
-	tahajjud: 'তাহাজ্জুদ নামাজ',
 	tilwat: 'কোরআন তেলাওয়াত',
 	translation: 'কোরআন অনুবাদ',
 	hadith: 'হাদিস',
 	readingBook: 'বই পড়া',
-	waqiyah: 'সূরা ওয়াকিয়া',
-	mulk: 'সূরা মুলক',
+	tafsir: 'তাফসীর',
 };
 
 const jikirLabels: Record<string, string> = {
@@ -250,6 +276,11 @@ const jikirLabels: Record<string, string> = {
 	durudYunus: 'দুরুদে ইউনুস',
 	durud: 'দুরূদ শরীফ',
 	doaTawhid: 'জিকরুত তাওহীদ',
+	ishraq: 'ইশরাক নামাজ',
+	tahajjud: 'তাহাজ্জুদ নামাজ',
+	waqiyah: 'সূরা ওয়াকিয়া',
+	mulk: 'সূরা মুলক',
+	kahf: 'সূরা কাহ্ফ',
 };
 
 const exerciseLabels: Record<string, string> = {

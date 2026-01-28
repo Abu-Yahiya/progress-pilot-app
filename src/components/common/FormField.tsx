@@ -12,7 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
-import { DailyActivityFormSchema } from '../validationSchema';
+import { DailyActivityFormSchema } from '../../pages/_app/daily-activity/~module/validationSchema';
 interface OptionsType {
 	label: string;
 	value: string;
@@ -22,6 +22,7 @@ interface FormFieldProps {
 	name: string;
 	label: string;
 	labelBn: string;
+	max?: number;
 	type: 'number' | 'text' | 'boolean' | 'textarea' | 'options';
 	register: UseFormRegister<DailyActivityFormSchema>;
 	errors: FieldErrors<DailyActivityFormSchema>;
@@ -38,6 +39,7 @@ const FormField = ({
 	labelBn,
 	type,
 	register,
+	max,
 	errors,
 	required = false,
 	placeholder,
@@ -133,6 +135,7 @@ const FormField = ({
 				id={name}
 				min={type === 'number' ? 0 : ''}
 				type={type}
+				max={max}
 				{...register(name as any, { valueAsNumber: type === 'number' })}
 				placeholder={placeholder}
 				className={cn(

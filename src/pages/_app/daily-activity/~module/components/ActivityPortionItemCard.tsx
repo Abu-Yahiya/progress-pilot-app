@@ -30,7 +30,7 @@ export default function ActivityPortionItemCard({
 	delay = 0,
 }: ActivityCardProps) {
 	const completedCount = items.filter(
-		(item) => item.value !== null && item.value > 0
+		(item) => item.value !== null && item.value > 0,
 	).length;
 	const totalCount = items.length;
 	const progressPercent = Math.round((completedCount / totalCount) * 100);
@@ -50,7 +50,7 @@ export default function ActivityPortionItemCard({
 							<div
 								className={cn(
 									'w-12 h-12 rounded-xl flex items-center justify-center backdrop-blur-sm',
-									iconColor
+									iconColor,
 								)}
 							>
 								<Icon className='w-6 h-6' />
@@ -99,7 +99,7 @@ export default function ActivityPortionItemCard({
 									'p-3 rounded-xl transition-all duration-200',
 									isCompleted
 										? 'bg-success/10 border border-success/20'
-										: 'bg-secondary hover:bg-secondary border border-transparent'
+										: 'bg-secondary hover:bg-secondary border border-transparent',
 								)}
 							>
 								<div className='flex items-center justify-between '>
@@ -111,7 +111,7 @@ export default function ActivityPortionItemCard({
 														'w-8 h-8 rounded-lg flex items-center justify-center',
 														isCompleted
 															? 'bg-success/20 text-success'
-															: 'bg-muted text-muted-foreground'
+															: 'bg-muted text-muted-foreground',
 													)}
 												>
 													<ItemIcon className='w-4 h-4' />
@@ -123,7 +123,7 @@ export default function ActivityPortionItemCard({
 												'font-medium text-sm',
 												isCompleted
 													? 'text-foreground'
-													: 'text-muted-foreground'
+													: 'text-muted-foreground',
 											)}
 										>
 											{item?.label}
@@ -143,7 +143,7 @@ export default function ActivityPortionItemCard({
 																	'p-2 text-center font-semibold text-sm',
 																	isCompleted
 																		? 'text-success'
-																		: 'text-muted-foreground'
+																		: 'text-muted-foreground',
 																)}
 															>
 																{`${item.value} / 10` || 0}
@@ -161,7 +161,7 @@ export default function ActivityPortionItemCard({
 													'w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200',
 													isCompleted
 														? 'bg-success text-white'
-														: 'bg-destructive text-primary-foreground'
+														: 'bg-destructive text-primary-foreground',
 												)}
 											>
 												{isCompleted ? (

@@ -12,10 +12,9 @@ export const All_Daily_Activities_Query = gql`
 				orgUID
 				ebadah {
 					namajWithJamath
+					kajaNamaj
 					extraNamaj
-					ishraq
-					kahf
-					tahajjud
+
 					tilwat {
 						count
 						description
@@ -27,8 +26,6 @@ export const All_Daily_Activities_Query = gql`
 						description
 						type
 					}
-					waqiyah
-					mulk
 					translation {
 						count
 						description
@@ -45,6 +42,11 @@ export const All_Daily_Activities_Query = gql`
 					durudYunus
 					durud
 					doaTawhid
+					tahajjud
+					ishraq
+					waqiyah
+					mulk
+					kahf
 				}
 				exercise {
 					pushUp

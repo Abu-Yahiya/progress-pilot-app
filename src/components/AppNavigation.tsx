@@ -62,7 +62,7 @@ export default function AppNavigation({ user }: AppNavigationProps) {
 					</Link>
 
 					{/* Desktop Navigation */}
-					<nav className='hidden md:flex items-center gap-1'>
+					<nav className='hidden xl:flex items-center gap-1'>
 						{navItems.map((item) => (
 							<Link
 								key={item.label}

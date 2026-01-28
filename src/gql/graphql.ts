@@ -151,62 +151,44 @@ export type EbadahInput = {
   __typename?: 'EbadahInput';
   extraNamaj?: Maybe<Scalars['Float']['output']>;
   hadith?: Maybe<Scalars['Float']['output']>;
-  ishraq?: Maybe<Scalars['Boolean']['output']>;
-  kahf?: Maybe<Scalars['Boolean']['output']>;
-  mulk?: Maybe<Scalars['Boolean']['output']>;
+  kajaNamaj?: Maybe<Scalars['Float']['output']>;
   namajWithJamath?: Maybe<Scalars['Float']['output']>;
   readingBook?: Maybe<TilwatTranslationInput>;
   tafsir?: Maybe<TilwatTranslationInput>;
-  tahajjud?: Maybe<Scalars['Boolean']['output']>;
   tilwat?: Maybe<TilwatTranslationInput>;
   translation?: Maybe<TilwatTranslationInput>;
-  waqiyah?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type EbadahInputDto = {
   extraNamaj?: InputMaybe<Scalars['Float']['input']>;
   hadith?: InputMaybe<Scalars['Float']['input']>;
-  ishraq?: InputMaybe<Scalars['Boolean']['input']>;
-  kahf?: InputMaybe<Scalars['Boolean']['input']>;
-  mulk?: InputMaybe<Scalars['Boolean']['input']>;
+  kajaNamaj?: InputMaybe<Scalars['Float']['input']>;
   namajWithJamath?: InputMaybe<Scalars['Float']['input']>;
   readingBook?: InputMaybe<TilwatTranslationInputDto>;
   tafsir?: InputMaybe<TilwatTranslationInputDto>;
-  tahajjud?: InputMaybe<Scalars['Boolean']['input']>;
   tilwat?: InputMaybe<TilwatTranslationInputDto>;
   translation?: InputMaybe<TilwatTranslationInputDto>;
-  waqiyah?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type EbadahTargetInput = {
   __typename?: 'EbadahTargetInput';
   extraNamaj?: Maybe<Scalars['Float']['output']>;
   hadith?: Maybe<Scalars['Float']['output']>;
-  ishraq?: Maybe<Scalars['Boolean']['output']>;
-  kahf?: Maybe<Scalars['Boolean']['output']>;
-  mulk?: Maybe<Scalars['Boolean']['output']>;
   namajWithJamath?: Maybe<Scalars['Float']['output']>;
   readingBook?: Maybe<TilwatTranslationTargetInput>;
   tafsir?: Maybe<TilwatTranslationTargetInput>;
-  tahajjud?: Maybe<Scalars['Boolean']['output']>;
   tilwat?: Maybe<TilwatTranslationTargetInput>;
   translation?: Maybe<TilwatTranslationTargetInput>;
-  waqiyah?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type EbadahTargetInputDto = {
   extraNamaj?: InputMaybe<Scalars['Float']['input']>;
   hadith?: InputMaybe<Scalars['Float']['input']>;
-  ishraq?: InputMaybe<Scalars['Boolean']['input']>;
-  kahf?: InputMaybe<Scalars['Boolean']['input']>;
-  mulk?: InputMaybe<Scalars['Boolean']['input']>;
   namajWithJamath?: InputMaybe<Scalars['Float']['input']>;
   readingBook?: InputMaybe<TilwatTranslationTargetInputDto>;
   tafsir?: InputMaybe<TilwatTranslationTargetInputDto>;
-  tahajjud?: InputMaybe<Scalars['Boolean']['input']>;
   tilwat?: InputMaybe<TilwatTranslationTargetInputDto>;
   translation?: InputMaybe<TilwatTranslationTargetInputDto>;
-  waqiyah?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type ExerciseInput = {
@@ -278,14 +260,24 @@ export type JikirInput = {
   doaTawhid?: Maybe<Scalars['Float']['output']>;
   durud?: Maybe<Scalars['Float']['output']>;
   durudYunus?: Maybe<Scalars['Float']['output']>;
+  ishraq?: Maybe<Scalars['Boolean']['output']>;
   istigfar?: Maybe<Scalars['Float']['output']>;
+  kahf?: Maybe<Scalars['Boolean']['output']>;
+  mulk?: Maybe<Scalars['Boolean']['output']>;
+  tahajjud?: Maybe<Scalars['Boolean']['output']>;
+  waqiyah?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type JikirInputDto = {
   doaTawhid?: InputMaybe<Scalars['Float']['input']>;
   durud?: InputMaybe<Scalars['Float']['input']>;
   durudYunus?: InputMaybe<Scalars['Float']['input']>;
+  ishraq?: InputMaybe<Scalars['Boolean']['input']>;
   istigfar?: InputMaybe<Scalars['Float']['input']>;
+  kahf?: InputMaybe<Scalars['Boolean']['input']>;
+  mulk?: InputMaybe<Scalars['Boolean']['input']>;
+  tahajjud?: InputMaybe<Scalars['Boolean']['input']>;
+  waqiyah?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type JikirTargetInput = {
@@ -293,14 +285,24 @@ export type JikirTargetInput = {
   doaTawhid?: Maybe<Scalars['Float']['output']>;
   durud?: Maybe<Scalars['Float']['output']>;
   durudYunus?: Maybe<Scalars['Float']['output']>;
+  ishraq?: Maybe<Scalars['Boolean']['output']>;
   istigfar?: Maybe<Scalars['Float']['output']>;
+  kahf?: Maybe<Scalars['Boolean']['output']>;
+  mulk?: Maybe<Scalars['Boolean']['output']>;
+  tahajjud?: Maybe<Scalars['Boolean']['output']>;
+  waqiyah?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type JikirTargetInputDto = {
   doaTawhid?: InputMaybe<Scalars['Float']['input']>;
   durud?: InputMaybe<Scalars['Float']['input']>;
   durudYunus?: InputMaybe<Scalars['Float']['input']>;
+  ishraq?: InputMaybe<Scalars['Boolean']['input']>;
   istigfar?: InputMaybe<Scalars['Float']['input']>;
+  kahf?: InputMaybe<Scalars['Boolean']['input']>;
+  mulk?: InputMaybe<Scalars['Boolean']['input']>;
+  tahajjud?: InputMaybe<Scalars['Boolean']['input']>;
+  waqiyah?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type LoginInput = {
