@@ -101,7 +101,7 @@ export default function DailySummary({
 											{category.name}
 										</p>
 										<p className='text-white font-semibold text-lg'>
-											{category.completed}
+											{category.completed}%
 										</p>
 										<div className='mt-2 h-1.5 bg-white/20 rounded-full overflow-hidden'>
 											<motion.div
