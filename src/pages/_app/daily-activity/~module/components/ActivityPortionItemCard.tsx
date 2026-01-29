@@ -36,7 +36,6 @@ export default function ActivityPortionItemCard({
 		(item) => item.value !== null && item.value > 0,
 	).length;
 	const totalCount = items.length;
-	const progressPercent = Math.round((completedCount / totalCount) * 100);
 
 	console.log(items);
 	return (
@@ -46,7 +45,6 @@ export default function ActivityPortionItemCard({
 			transition={{ duration: 0.4, delay }}
 		>
 			<Card className='overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 group'>
-				{/* Header with gradient */}
 				<div className={cn('p-4 relative overflow-hidden', bgGradient)}>
 					<div className='absolute inset-0 bg-black/5 dark:bg-black/20' />
 					<div className='relative flex items-center justify-between'>
