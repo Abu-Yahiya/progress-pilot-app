@@ -1,18 +1,14 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-	DailyActivity,
-	EbadahInputDto,
-	ExerciseInputDto,
-	JikirInputDto,
-} from '@/gql/graphql';
+import { DailyActivity } from '@/gql/graphql';
 import { useDailyActivities } from '@/hooks/useDailyActivities';
+import { progressAtom } from '@/store/progress.atom';
 import { DialogTitle } from '@radix-ui/react-dialog';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
+import { useAtom } from 'jotai';
 import { Calendar, Plus, Sparkles } from 'lucide-react';
-import { useState } from 'react';
 import ActivityAccordionList from './~module/components/ActivityAccordionList';
 import DailyActivityForm from './~module/components/DailyActivityForm';
 import DailySummary from './~module/components/DailySummary';
@@ -22,7 +18,6 @@ export const Route = createLazyFileRoute('/_app/daily-activity/')({
 });
 
 function RouteComponent() {
-	// console.log(data?.activitiesByOrgAndUser?.__typename);
 	const {
 		activities,
 		editingActivity,
@@ -36,95 +31,30 @@ function RouteComponent() {
 		isLoadingActivities,
 	} = useDailyActivities();
 
-	// const handleSubmit = addActivity;
-
-	// State for activities
-	const [ebadah] = useState<EbadahInputDto>({
-		namajWithJamath: null,
-		extraNamaj: null,
-		tilwat: null,
-		hadith: null,
-		readingBook: null,
-		translation: null,
-	});
-
-	const [jikirAjkar] = useState<JikirInputDto>({
-		istigfar: null,
-		durudYunus: null,
-		durud: 0,
-		doaTawhid: null,
-	});
-	const [exercise] = useState<ExerciseInputDto>({
-		pushUp: 0,
-		squats: null,
-		seatUp: null,
-		running: null,
-		jumpingJack: null,
-		plank: null,
-		dumbbleCurl: null,
-		others: null,
-	});
-
-	const [tasks] = useState<any[]>([
-		{
-			id: '1',
-			title: 'Complete project documentation',
-			description: 'Write API docs',
-			progressScore: 75,
-		},
-		{
-			id: '2',
-			title: 'Review pull requests',
-			description: 'Code review for team',
-			progressScore: 0,
-		},
-		{
-			id: '3',
-			title: 'Study React patterns',
-			description: '',
-			progressScore: 30,
-		},
-	]);
-
-	// Calculate summaries for DailySummary
-	const getCompletedCount = (
-		data: EbadahInputDto | JikirInputDto | ExerciseInputDto,
-		// @ts-ignore
-	) => Object.values(data).filter((v) => v !== null && v > 0).length;
+	const [progress] = useAtom(progressAtom);
 
 	const categorySummaries = [
 		{
-			name: 'Ebadah',
-			completed: getCompletedCount(ebadah),
-			total: Object.keys(ebadah).length,
+			name: 'একাডেমিক',
+			completed: progress?.academicAchivedPercentage,
 			color: 'bg-emerald-400',
 		},
 		{
-			name: 'Jikir',
-			completed: getCompletedCount(jikirAjkar),
-			total: Object.keys(jikirAjkar).length,
-			color: 'bg-pink-400',
+			name: 'ইবাদাহ',
+			completed: progress?.ebadahAchivedPercentage,
+			color: 'bg-pink-deep',
 		},
 		{
-			name: 'Exercise',
-			completed: getCompletedCount(exercise),
-			total: Object.keys(exercise).length,
-			color: 'bg-orange-400',
+			name: 'এক্সারসাইজ',
+			completed: progress?.exerciseAchivedPercentage,
+			color: 'bg-amber-deep',
 		},
 		{
-			name: 'Tasks',
-			completed: tasks.filter((t) => t.progressScore === 100).length,
-			total: tasks.length,
-			color: 'bg-slate-300',
+			name: 'টাস্ক',
+			completed: progress?.taskAchivedPercentage,
+			color: 'bg-teal-deep',
 		},
 	];
-
-	const overallProgress = Math.round(
-		categorySummaries.reduce(
-			(acc, cat) => acc + (cat.completed / cat.total) * 100,
-			0,
-		) / categorySummaries.length,
-	);
 
 	const today = new Date().toLocaleDateString('en-US', {
 		weekday: 'long',
@@ -157,6 +87,19 @@ function RouteComponent() {
 						</div>
 					</div>
 				</div>
+			</motion.div>
+			<DailySummary categories={categorySummaries} streak={12} />
+			{/* Section Header */}
+			<div className='flex items-center justify-between mb-6'>
+				<div>
+					<h2 className='text-xl font-display font-semibold text-foreground'>
+						Monthly Activities
+					</h2>
+
+					<p className='text-sm text-muted-foreground font-bangla'>
+						{activities?.length} records
+					</p>
+				</div>
 				<Button
 					variant='hero'
 					className='self-start md:self-auto bg-gradient-to-br from-primary to-deep'
@@ -165,23 +108,6 @@ function RouteComponent() {
 					<Plus className='w-4 h-4 mr-2' />
 					Add Activity
 				</Button>
-			</motion.div>
-			<DailySummary
-				categories={categorySummaries}
-				streak={12}
-				overallProgress={overallProgress}
-			/>
-			{/* Section Header */}
-			<div className='flex items-center justify-between mb-6'>
-				<div>
-					<h2 className='text-xl font-display font-semibold text-foreground'>
-						Monthly Activities
-					</h2>
-					<p className='text-sm text-muted-foreground'>All Activities</p>
-				</div>
-				<p className='text-sm text-muted-foreground font-bangla'>
-					{activities?.length} records
-				</p>
 			</div>
 			{/* Activity List */}
 			<ActivityAccordionList

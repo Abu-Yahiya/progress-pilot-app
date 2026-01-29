@@ -9,6 +9,7 @@ interface ActivityItem {
 	label: string;
 	value: any;
 	icon?: LucideIcon;
+	target?: number | string;
 	status?: string;
 }
 
@@ -19,6 +20,7 @@ interface ActivityCardProps {
 	bgGradient: string;
 	items: ActivityItem[];
 	delay?: number;
+	achivedPercentage: number;
 }
 
 export default function ActivityPortionItemCard({
@@ -28,6 +30,7 @@ export default function ActivityPortionItemCard({
 	bgGradient,
 	items,
 	delay = 0,
+	achivedPercentage,
 }: ActivityCardProps) {
 	const completedCount = items.filter(
 		(item) => item.value !== null && item.value > 0,
@@ -35,6 +38,7 @@ export default function ActivityPortionItemCard({
 	const totalCount = items.length;
 	const progressPercent = Math.round((completedCount / totalCount) * 100);
 
+	console.log(items);
 	return (
 		<motion.div
 			initial={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -67,7 +71,7 @@ export default function ActivityPortionItemCard({
 						<div className='flex items-center gap-2'>
 							<div className='text-right'>
 								<span className='text-2xl font-bold text-white'>
-									{progressPercent || 0}%
+									{achivedPercentage || 0}%
 								</span>
 							</div>
 						</div>
@@ -77,7 +81,7 @@ export default function ActivityPortionItemCard({
 						<motion.div
 							className='h-full bg-white rounded-full'
 							initial={{ width: 0 }}
-							animate={{ width: `${progressPercent}%` }}
+							animate={{ width: `${achivedPercentage}%` }}
 							transition={{ duration: 0.8, delay: delay + 0.2 }}
 						/>
 					</div>
@@ -146,7 +150,7 @@ export default function ActivityPortionItemCard({
 																		: 'text-muted-foreground',
 																)}
 															>
-																{`${item.value} / 10` || 0}
+																{`${item.value} / ${item?.target}` || 0}
 															</span>
 														</div>
 													)}
@@ -184,9 +188,9 @@ export default function ActivityPortionItemCard({
 											</Badge>
 											<span>{item?.value ?? 0}%</span>
 										</div>
-										<div className='h-2 bg-white/20 rounded-full overflow-hidden relative'>
+										<div className='h-2 bg-teal-deep/15 rounded-full overflow-hidden relative'>
 											<motion.div
-												className='h-full bg-foreground rounded-full'
+												className='h-full bg-teal-deep rounded-full'
 												initial={{ width: 0 }}
 												animate={{ width: `${item?.value}%` }}
 												transition={{ duration: 0.8, delay: delay + 0.2 }}

@@ -12,8 +12,8 @@ const EmptyTaskState = ({ onAddTask }: EmptyTaskStateProps) => {
 				<div className='w-24 h-24 rounded-full bg-gradient-to-br from-primary to-deep flex items-center justify-center animate-float'>
 					<ClipboardList className='w-12 h-12 text-white' />
 				</div>
-				<div className='absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-foreground flex items-center justify-center shadow-button'>
-					<Plus className='w-4 h-4 text-black' />
+				<div className='absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-background border-border border-1 flex items-center justify-center shadow-button'>
+					<Plus className='w-4 h-4 text-foreground' />
 				</div>
 			</div>
 

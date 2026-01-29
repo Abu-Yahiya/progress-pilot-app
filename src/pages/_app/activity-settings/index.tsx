@@ -19,6 +19,7 @@ export const Route = createFileRoute('/_app/activity-settings/')({
 function RouteComponent() {
 	const [session] = useAtom(userAtom);
 
+	// target settings
 	const { data: targetSettings } = useQuery({
 		queryKey: ['my-activity-settings'],
 		queryFn: () =>
@@ -31,6 +32,7 @@ function RouteComponent() {
 			}),
 	});
 
+	// add activity target settings
 	const addActivitySettings = useMutation({
 		mutationFn: (payload: any) =>
 			gqlRequest({
@@ -48,6 +50,7 @@ function RouteComponent() {
 		},
 	});
 
+	// update added target settings
 	const updateActivitySettings = useMutation({
 		mutationFn: (payload: any) =>
 			gqlRequest({

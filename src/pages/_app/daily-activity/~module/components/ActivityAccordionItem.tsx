@@ -6,8 +6,14 @@ import {
 } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { DailyActivity } from '@/gql/graphql';
+import { ActivitySettings, DailyActivity } from '@/gql/graphql';
+import { gqlRequest } from '@/lib/api-client';
+import { My_Activity_Target_Settings } from '@/pages/_app/activity-settings/~module/gql-query/query.gql';
+import { userAtom } from '@/store/auth.atom';
+import { progressAtom } from '@/store/progress.atom';
+import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
+import { useAtom } from 'jotai';
 import {
 	BookOpen,
 	BookOpenText,
@@ -22,7 +28,7 @@ import {
 	SunMoon,
 	Trash2,
 } from 'lucide-react';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import ActivityPortionItemCard from './ActivityPortionItemCard';
 
 interface ActivityCardProps {
@@ -36,59 +42,137 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 	onEdit,
 	onDelete,
 }) => {
+	const [, setProgress] = useAtom(progressAtom);
+
 	const { show } = useAppConfirm();
+	const [session] = useAtom(userAtom);
+
 	const formattedDate = activity.createdAt
 		? format(new Date(activity.createdAt), 'EEEE, dd MMMM yyyy')
 		: 'Invalid Date';
 
-	const totalNamaj =
-		(activity.ebadah?.namajWithJamath || 0) +
-		(activity.ebadah?.extraNamaj || 0);
-	// const totalJikir =
-	// 	(activity.jikirAjkar?.istigfar || 0) +
-	// 	(activity.jikirAjkar?.durudYunus || 0) +
-	// 	(activity.jikirAjkar?.durud || 0) +
-	// 	(activity.jikirAjkar?.doaTawhid || 0);
-	const totalExercise =
-		(activity.exercise?.pushUp || 0) +
-		(activity.exercise?.squats || 0) +
-		(activity.exercise?.seatUp || 0) +
-		(activity.exercise?.jumpingJack || 0);
+	const { data: targetSettings } = useQuery({
+		queryKey: ['my-activity-settings-in-activity-page'],
+		queryFn: async () => {
+			const res = await gqlRequest<{ myActivitySetting: ActivitySettings }>({
+				query: My_Activity_Target_Settings,
+				variables: {
+					orgUid: import.meta.env.VITE_APP_ORG_UID,
+					userId: session?.user?._id,
+				},
+			});
+			return res?.myActivitySetting;
+		},
+	});
 
-	// Convert data to items for ActivityCard
-	// delete activity?.ebadah?.ishraq;
-	// delete activity?.ebadah?.kahf;
-	// delete activity?.ebadah?.mulk;
-	// delete activity?.ebadah?.waqiyah;
-	// delete activity?.ebadah?.tahajjud;
+	// helpers
+	const getValue = (value: any) => value?.count ?? value ?? 0;
+	const getTarget = (target: any) => target?.count ?? target ?? 0;
+	const calcAchievement = (value: number, target: number) =>
+		target > 0 ? (100 / target) * value : 0;
 
+	// academic percantage
+	let academicTotalPercentage = 0;
+
+	Object.entries(activity?.ebadah ?? {}).map(([key, rawValue]) => {
+		const value = getValue(rawValue);
+		// @ts-ignore
+		const target = getTarget(targetSettings?.ebadahTarget?.[key]!);
+
+		return (academicTotalPercentage =
+			academicTotalPercentage + calcAchievement(value, target));
+	});
+
+	const academicAchivementPercentage = Math.ceil(
+		(100 / 700) * academicTotalPercentage,
+	);
+
+	// ebadah percentage
+	let ebadahTotalPercentage = 0;
+
+	Object.entries(activity?.jikirAjkar ?? {}).map(([key, rawValue]) => {
+		const value = getValue(rawValue);
+		// @ts-ignore
+		const target = getTarget(targetSettings?.jikirAjkarTarget?.[key]!);
+
+		return (ebadahTotalPercentage =
+			ebadahTotalPercentage + calcAchievement(value, target));
+	});
+
+	const ebadahAchivementPercentage = Math.ceil(
+		(100 / 800) * ebadahTotalPercentage,
+	);
+
+	// exercise percentage
+	let exerciseTotalPercentage = 0;
+
+	Object.entries(activity?.exercise ?? {}).map(([key, rawValue]) => {
+		const value = getValue(rawValue);
+		// @ts-ignore
+		const target = getTarget(targetSettings?.exerciseTarget?.[key]!);
+
+		return (exerciseTotalPercentage =
+			exerciseTotalPercentage + calcAchievement(value, target));
+	});
+
+	const exerciseAchivementPercentage = Math.ceil(
+		(100 / 600) * exerciseTotalPercentage,
+	);
+
+	// task percentage
+	let taskTotalPercentage = 0;
+
+	activity?.it_task?.map((task) => {
+		return (taskTotalPercentage = taskTotalPercentage + task?.progressScore!);
+	});
+
+	const taskAchivementPercentage =
+		(100 / (100 * activity?.it_task?.length!)) * taskTotalPercentage || 0;
+
+	// set to store
+	useEffect(() => {
+		setProgress({
+			academicAchivedPercentage: academicAchivementPercentage,
+			ebadahAchivedPercentage: ebadahAchivementPercentage,
+			exerciseAchivedPercentage: exerciseAchivementPercentage,
+			taskAchivedPercentage: taskAchivementPercentage,
+			todaysTotalAchivedPercentage:
+				(100 / 400) *
+				(academicAchivementPercentage +
+					ebadahAchivementPercentage +
+					exerciseAchivementPercentage +
+					taskAchivementPercentage),
+		});
+	}, [
+		academicAchivementPercentage,
+		ebadahAchivementPercentage,
+		exerciseAchivementPercentage,
+		taskAchivementPercentage,
+	]);
+
+	// items
 	const ebadahItems = Object?.entries(activity?.ebadah! ?? {})?.map(
 		([key, value]) => ({
 			key,
 			label: ebadahLabels[key] || key,
 			// @ts-ignore
 			value: value?.count ?? value,
+			target:
+				// @ts-ignore
+				targetSettings?.ebadahTarget?.[key]?.count ??
+				// @ts-ignore
+				targetSettings?.ebadahTarget?.[key] | 0,
 			icon: ebadahIcons[key],
 		}),
 	);
-
-	// const jikrAjkar = activity?.jikirAjkar!;
-	// // @ts-ignore
-	// jikrAjkar.ishraq = activity?.ebadah?.ishraq;
-	// // @ts-ignore
-	// jikrAjkar.kahf = activity?.ebadah?.kahf;
-	// // @ts-ignore
-	// jikrAjkar.mulk = activity?.ebadah?.mulk;
-	// // @ts-ignore
-	// jikrAjkar.waqiyah = activity?.ebadah?.waqiyah;
-	// // @ts-ignore
-	// jikrAjkar.tahajjud = activity?.ebadah?.tahajjud;
 
 	const jikirItems = Object?.entries(activity?.jikirAjkar! ?? {})?.map(
 		([key, value]) => ({
 			key,
 			label: jikirLabels[key] || key,
 			value,
+			// @ts-ignore
+			target: targetSettings?.jikirAjkarTarget?.[key],
 			icon: jikrIcons[key],
 		}),
 	);
@@ -98,6 +182,8 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 			key,
 			label: exerciseLabels[key] || key,
 			value,
+			// @ts-ignore
+			target: targetSettings?.exerciseTarget?.[key],
 			icon: exerciseIcons[key],
 		}),
 	);
@@ -108,6 +194,7 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 		icon: LayoutGrid,
 		status: task?.status,
 	}));
+
 	return (
 		<AccordionItem
 			value={activity?._id!}
@@ -119,28 +206,34 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 						<div className='bg-gradient-to-br from-primary to-deep w-10 h-10 rounded-lg bg-primary flex items-center justify-center shadow-soft'>
 							<BookOpen className='w-5 h-5 text-primary-foreground' />
 						</div>
-						<div className='text-left'>
+						<div className='text-left space-y-3'>
 							<h3 className='font-display text-md font-semibold text-foreground'>
 								{formattedDate}
 							</h3>
 							<div className='hidden md:flex items-center gap-2 mt-1'>
 								<Badge
 									variant='outline'
-									className='text-xs bg-primary/10 text-primary border-primary/20'
+									className='text-sm bg-primary/10 text-primary border-primary/20'
 								>
-									Namaj: {totalNamaj}
+									একাডেমিক : {academicAchivementPercentage}%
 								</Badge>
 								<Badge
 									variant='outline'
-									className='text-xs bg-accent/10 text-accent border-accent/20'
+									className='text-sm bg-pink-deep/10 text-pink-deep border-pink-deep/20'
 								>
-									Exercise: {totalExercise}
+									ইবাদাহ: {ebadahAchivementPercentage}%
 								</Badge>
 								<Badge
 									variant='outline'
-									className='text-xs bg-deep/10 text-deep-glow  border-deep/20'
+									className='text-sm bg-orange-deep/10 text-orange-deep  border-orange-deep/20'
 								>
-									Task: {activity?.it_task?.length ?? 0}
+									এক্সারসাইজ: {exerciseAchivementPercentage} %
+								</Badge>
+								<Badge
+									variant='outline'
+									className='text-sm bg-teal-deep/10 text-teal-deep  border-teal-deep/20'
+								>
+									টাস্ক: {taskAchivementPercentage} %
 								</Badge>
 							</div>
 						</div>
@@ -150,15 +243,15 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 						onClick={(e) => e.stopPropagation()}
 					>
 						<Button
-							// variant='icon'
+							variant='accent'
 							size='icon'
 							onClick={() => onEdit(activity)}
-							className='bg-gradient-to-br from-primary to-deep h-8 w-8'
+							className='h-8 w-8'
 						>
 							<Edit className='w-4 h-4' />
 						</Button>
 						<Button
-							// variant='icon'
+							variant='destructive'
 							size='icon'
 							onClick={() =>
 								show({
@@ -168,7 +261,7 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 									},
 								})
 							}
-							className='bg-gradient-to-br from-primary to-deep h-8 w-8 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive'
+							className='h-8 w-8 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive'
 						>
 							<Trash2 className='w-4 h-4' />
 						</Button>
@@ -182,8 +275,9 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 						icon={NotebookPen}
 						iconColor='bg-white/20 text-white'
 						bgGradient='bg-gradient-to-r from-primary via-indigo-deep to-deep'
-						items={ebadahItems!}
+						items={ebadahItems}
 						delay={0.1}
+						achivedPercentage={academicAchivementPercentage}
 					/>
 
 					{/* Jikir Ajkar Card */}
@@ -194,6 +288,7 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 						bgGradient='bg-gradient-to-r from-pink-deep via-rose-deep to-red-medium'
 						items={jikirItems}
 						delay={0.2}
+						achivedPercentage={ebadahAchivementPercentage}
 					/>
 
 					{/* Exercise Card */}
@@ -205,6 +300,7 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 						// @ts-ignore
 						items={exerciseItems!}
 						delay={0.3}
+						achivedPercentage={exerciseAchivementPercentage}
 					/>
 
 					{/* it task */}
@@ -216,6 +312,7 @@ const ActivityAccordionItem: FC<ActivityCardProps> = ({
 						items={taskItems}
 						bgGradient='bg-gradient-to-r from-emerald-deep-1 via-emerald-deep-2 to-teal-deep'
 						delay={0.3}
+						achivedPercentage={taskAchivementPercentage}
 					/>
 				</div>
 			</AccordionContent>

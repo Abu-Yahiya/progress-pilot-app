@@ -61,7 +61,7 @@ const FormField = ({
 	if (type === 'boolean') {
 		const isChecked = watch?.(name) ?? false;
 		return (
-			<div className='flex items-center justify-between p-4 !bg-dimmed-bg rounded-lg border border-border/30 hover:border-primary/30 transition-colors'>
+			<div className='flex items-center justify-between p-4 !bg-background rounded-lg border border-border/30 hover:border-primary/30 transition-colors'>
 				<div className='space-y-0.5'>
 					<Label className='text-sm font-medium text-foreground'>
 						{labelBn}
@@ -69,6 +69,7 @@ const FormField = ({
 					<p className='text-xs text-muted-foreground font-bangla'>{label}</p>
 				</div>
 				<Switch
+					className={isChecked ? '!bg-primary' : '!bg-primary/30'}
 					checked={isChecked}
 					onCheckedChange={(checked: any) => setValue?.(name, checked)}
 				/>
@@ -83,7 +84,7 @@ const FormField = ({
 					{/* <span className='text-muted-foreground font-bangla'>({label})</span> */}
 				</Label>
 				<Select>
-					<SelectTrigger className='w-full'>
+					<SelectTrigger className='w-full !bg-background'>
 						<SelectValue placeholder={placeholder} />
 					</SelectTrigger>
 					<SelectContent>
@@ -113,7 +114,7 @@ const FormField = ({
 					{...register(name as any)}
 					placeholder={placeholder}
 					className={cn(
-						'bg-background text-primary border-border/50 focus:border-primary resize-none',
+						'!bg-background text-primary border-border/50 focus:border-primary resize-none',
 						errorMessage && 'border-destructive',
 					)}
 				/>
@@ -139,7 +140,7 @@ const FormField = ({
 				{...register(name as any, { valueAsNumber: type === 'number' })}
 				placeholder={placeholder}
 				className={cn(
-					'bg-background text-primary border-border/50 focus:border-primary',
+					'!bg-background text-primary border-border/50 focus:border-primary',
 					errorMessage && 'border-destructive',
 				)}
 			/>

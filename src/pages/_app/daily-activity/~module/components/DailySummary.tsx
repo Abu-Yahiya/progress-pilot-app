@@ -1,31 +1,33 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { progressAtom } from '@/store/progress.atom';
 import { motion } from 'framer-motion';
+import { useAtom } from 'jotai';
 import { Flame } from 'lucide-react';
 
 interface CategorySummary {
 	name: string;
 	completed: number;
-	total: number;
 	color: string;
 }
 
 interface DailySummaryProps {
 	categories: CategorySummary[];
 	streak: number;
-	overallProgress: number;
 }
 
 export default function DailySummary({
 	categories,
 	streak,
-	overallProgress,
 }: DailySummaryProps) {
-	const getMotivationalMessage = (progress: number) => {
-		if (progress === 100) return "🎉 Perfect day! You're amazing!";
-		if (progress >= 75) return '🔥 Almost there! Keep pushing!';
-		if (progress >= 50) return '💪 Great progress! Stay focused!';
-		if (progress >= 25) return "🚀 Good start! You've got this!";
+	const [progress] = useAtom(progressAtom);
+
+	// comment as progress
+	const getMotivationalMessage = (score: number) => {
+		if (score === 100) return "🎉 Perfect day! You're amazing!";
+		if (score >= 75) return '🔥 Almost there! Keep pushing!';
+		if (score >= 50) return '💪 Great progress! Stay focused!';
+		if (score >= 25) return "🚀 Good start! You've got this!";
 		return '✨ Begin your journey today!';
 	};
 
@@ -57,17 +59,17 @@ export default function DailySummary({
 										className='fill-none stroke-white'
 										strokeWidth='8'
 										strokeLinecap='round'
-										strokeDasharray={`${overallProgress * 2.51} 251`}
+										strokeDasharray={`${progress?.todaysTotalAchivedPercentage * 2.51} 251`}
 										initial={{ strokeDasharray: '0 251' }}
 										animate={{
-											strokeDasharray: `${overallProgress * 2.51} 251`,
+											strokeDasharray: `${progress?.todaysTotalAchivedPercentage * 2.51} 251`,
 										}}
 										transition={{ duration: 1, delay: 0.3 }}
 									/>
 								</svg>
 								<div className='absolute inset-0 flex items-center justify-center'>
 									<span className='text-2xl font-bold text-white'>
-										{overallProgress}%
+										{progress?.todaysTotalAchivedPercentage}%
 									</span>
 								</div>
 							</div>
@@ -77,7 +79,9 @@ export default function DailySummary({
 									Today's Progress
 								</h2>
 								<p className='text-white/80 text-sm'>
-									{getMotivationalMessage(overallProgress)}
+									{getMotivationalMessage(
+										progress?.todaysTotalAchivedPercentage,
+									)}
 								</p>
 							</div>
 						</div>
@@ -85,9 +89,6 @@ export default function DailySummary({
 						{/* Category breakdown */}
 						<div className='flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3'>
 							{categories.map((category, index) => {
-								const percent = Math.round(
-									(category.completed / category.total) * 100
-								);
 								return (
 									<motion.div
 										key={category.name}
@@ -96,17 +97,17 @@ export default function DailySummary({
 										transition={{ delay: 0.2 + index * 0.1 }}
 										className='bg-white/10 backdrop-blur-sm rounded-xl p-3'
 									>
-										<p className='text-white/70 text-xs mb-1 truncate'>
+										<p className='text-white/70 text-sm mb-1 truncate'>
 											{category.name}
 										</p>
 										<p className='text-white font-semibold text-lg'>
-											{category.completed}/{category.total}
+											{category.completed}
 										</p>
 										<div className='mt-2 h-1.5 bg-white/20 rounded-full overflow-hidden'>
 											<motion.div
 												className={cn('h-full rounded-full', category.color)}
 												initial={{ width: 0 }}
-												animate={{ width: `${percent}%` }}
+												animate={{ width: `${category.completed}%` }}
 												transition={{ duration: 0.8, delay: 0.4 + index * 0.1 }}
 											/>
 										</div>
@@ -117,9 +118,9 @@ export default function DailySummary({
 
 						{/* Streak badge */}
 						<div className='flex items-center gap-4'>
-							<div className='bg-white/10 backdrop-blur-sm rounded-xl p-4 flex items-center gap-3'>
+							<div className='bg-orange/10 backdrop-blur-sm rounded-xl p-4 flex items-center gap-3'>
 								<div className='w-12 h-12 rounded-xl bg-gold/20 flex items-center justify-center'>
-									<Flame className='w-6 h-6 text-gold' />
+									<Flame className='w-6 h-6 text-orange-400' />
 								</div>
 								<div>
 									<p className='text-white/70 text-xs'>Streak</p>

@@ -56,17 +56,18 @@ const DailyActivityForm = ({
 				kajaNamaj: initialData?.ebadah?.kajaNamaj ?? 0,
 				tilwat: {
 					count: initialData?.ebadah?.tilwat?.count ?? 0,
-					type: initialData?.ebadah?.tilwat?.type!,
+					type: initialData?.ebadah?.tilwat?.type! ?? '',
 					description: initialData?.ebadah?.tilwat?.description!,
 				},
 				hadith: initialData?.ebadah?.hadith ?? 0,
 				readingBook: {
 					count: initialData?.ebadah?.readingBook?.count ?? 0,
+
 					description: initialData?.ebadah?.readingBook?.description!,
 				},
 				translation: {
 					count: initialData?.ebadah?.translation?.count ?? 0,
-					type: initialData?.ebadah?.translation?.type!,
+					type: initialData?.ebadah?.translation?.type! ?? '',
 					description: initialData?.ebadah?.translation?.description!,
 				},
 				tafsir: {
@@ -122,11 +123,11 @@ const DailyActivityForm = ({
 			<Accordion
 				type='single'
 				collapsible
-				defaultValue={'amal-section'}
+				defaultValue={'academic-section'}
 				className='space-y-3'
 			>
 				<AccordionItem
-					value={'amal-section'}
+					value={'academic-section'}
 					className='bg-card rounded-xl px-2 shadow-card border border-border/50 animate-fade-in'
 				>
 					<AccordionTrigger className='px-4 hover:no-underline hover:bg-secondary/20 transition-colors'>
@@ -136,7 +137,7 @@ const DailyActivityForm = ({
 							</div>
 							<div>
 								<h3 className='font-display text-lg font-semibold text-foreground'>
-									আমল-ইখলাস
+									একাডেমিক
 								</h3>
 							</div>
 						</div>
@@ -312,17 +313,17 @@ const DailyActivityForm = ({
 				</AccordionItem>
 
 				<AccordionItem
-					value={'jikir-section'}
+					value={'ebadah-section'}
 					className='bg-card rounded-xl px-2 shadow-card border border-border/50 animate-fade-in'
 				>
 					<AccordionTrigger className='px-4 hover:no-underline hover:bg-secondary/20 transition-colors'>
 						<div className='flex items-center gap-3'>
-							<div className='w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-deep flex items-center justify-center text-primary-foreground'>
+							<div className='w-10 h-10 rounded-lg bg-gradient-to-r from-pink-deep via-rose-deep to-red-medium flex items-center justify-center text-primary-foreground'>
 								<Heart className='w-5 h-5' />
 							</div>
 							<div>
 								<h3 className='font-display text-lg font-semibold text-foreground'>
-									জিকির ও আযকার
+									ইবাদাহ
 								</h3>
 							</div>
 						</div>
@@ -423,7 +424,7 @@ const DailyActivityForm = ({
 				>
 					<AccordionTrigger className='px-4 hover:no-underline hover:bg-secondary/20 transition-colors'>
 						<div className='flex items-center gap-3'>
-							<div className='w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-deep flex items-center justify-center text-primary-foreground'>
+							<div className='w-10 h-10 rounded-lg bg-gradient-to-r from-orange-deep via-amber-deep to-yellow-medium flex items-center justify-center text-primary-foreground'>
 								<Dumbbell className='w-5 h-5' />
 							</div>
 							<div>
@@ -515,7 +516,7 @@ const DailyActivityForm = ({
 				>
 					<AccordionTrigger className='px-4 hover:no-underline hover:bg-secondary/20 transition-colors'>
 						<div className='flex items-center gap-3'>
-							<div className='w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-deep flex items-center justify-center text-primary-foreground'>
+							<div className='w-10 h-10 rounded-lg bg-gradient-to-r from-emerald-deep-1 via-emerald-deep-2 to-teal-deep flex items-center justify-center text-primary-foreground'>
 								<LayoutGrid className='w-5 h-5' />
 							</div>
 							<div>
@@ -577,21 +578,21 @@ const DailyActivityForm = ({
 								}
 							/>
 						)}
+						{fields?.length ? (
+							<Button
+								onClick={() =>
+									append({
+										title: '',
+										description: '',
+										progressScore: 0,
+									})
+								}
+								className='flex mt-0 ml-5 mt-2'
+							>
+								<Plus /> Add Task
+							</Button>
+						) : null}
 					</AccordionContent>
-					{fields?.length ? (
-						<Button
-							onClick={() =>
-								append({
-									title: '',
-									description: '',
-									progressScore: 0,
-								})
-							}
-							className='flex mt-0 ml-5 mt-2'
-						>
-							<Plus /> Add Task
-						</Button>
-					) : null}
 				</AccordionItem>
 			</Accordion>
 
