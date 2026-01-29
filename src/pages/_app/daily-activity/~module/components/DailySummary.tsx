@@ -69,7 +69,7 @@ export default function DailySummary({
 								</svg>
 								<div className='absolute inset-0 flex items-center justify-center'>
 									<span className='text-2xl font-bold text-white'>
-										{progress?.todaysTotalAchivedPercentage}%
+										{Math.ceil(progress?.todaysTotalAchivedPercentage)}%
 									</span>
 								</div>
 							</div>
